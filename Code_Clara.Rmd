@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-## This is the environment in which we are gonna code!
+## This is the environment in which we are gonna code! Clara please give it a look
 
 ```{r}
 
