@@ -9,18 +9,15 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r, include=FALSE, echo=FALSE}
 
-## This is the environment in which we are gonna code! Clara please give it a look
-## this is my change
-```{r, echo=FALSE}
-
-install.packages('haven')
-install.packages('dplyr')
-install.packages('leaken')
-install.packages('lsr')
-install.packages('labelled')
-install.packages('knitr')
-install.packages("kableExtra")
+#install.packages('haven')
+#install.packages('dplyr')
+#install.packages('leaken')
+#install.packages('lsr')
+#install.packages('labelled')
+#install.packages('knitr')
+#install.packages("kableExtra")
 
 library(haven)
 library(dplyr)
@@ -31,11 +28,55 @@ library(knitr)
 library(Hmisc)
 library(kableExtra)
 
-ind16 <- read_dta("rper16.dta")
-carcom16 <- read_dta("carcom16.dta")
+rper <- read_dta("rper16.dta")
+carcom <- read_dta('carcom16.dta')
+q16a <- read_dta('q16a.dta')
+
+df <- merge(carcom, q16a, on='nquest')
+df <- merge(df, rper, by=c('nquest','nord'))
+
+remove('carcom','q16a','rper')
+
+df <- data.frame(df$studio,df$y,df$area3,df$ireg)
+
+#DF is the final dataframe containing only: Educational Attainment (STUDIO), Income per Capita(Y), Geog area(AREA3), Region(IREG).
+```
+
+# TITLE
+
+## Inroduction
+
+We are gonna do bla bla bla... Shiw 16, Bla bla bla...
+
+##Exploratory Data Analysis
+
+Here we want first to understand how our variables work, and how we can manipulate them to make them useful to our project.
+
+```{r echo=FALSE}
+
+kable(table(df$df.studio), caption = 'Absolute Frequencies of Educational Attainment in the Dataset', col.names = c('Educational Attainment','Frequency'))
 
 ```
 
+We know from the [documentation](https://www.bancaditalia.it/statistiche/tematiche/indagini-famiglie-imprese/bilanci-famiglie/documentazione/documenti/2016/Quest_eng2016.pdf?language_id=1) that 6 is equal to 3y-degree. So we will put everything equal or higher than it into the same category, and everythin lower, into another cateogory.
+
+```{r, echo=FALSE}
+
+df$graduate <- ifelse(df$df.studio>=6,'At least Graudated','Not Graduated')
 
 
 
+kable(table(df$graduate), caption = 'Graduated VS Not Graduated in Absolute Terms in the Dataset', col.names = c('...','Frequency'))
+
+```
+---
+
+##Block 1 - STUDIO VS AREA3
+
+---
+
+##Block 2 - INCOME VS STUDIO VS IREG VS AREA3
+
+---
+
+##Block 3 - GEOGRAFPHICAL...
