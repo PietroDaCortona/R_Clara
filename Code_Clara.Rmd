@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## This is the environment in which we are gonna code! Clara please give it a look
 ## this is my change
-```{r}
+```{r, echo=FALSE}
 
 install.packages('haven')
 install.packages('dplyr')
@@ -31,8 +31,11 @@ library(knitr)
 library(Hmisc)
 library(kableExtra)
 
-
-fam16 <- read_dta("rfam16.dta")
 ind16 <- read_dta("rper16.dta")
+carcom16 <- read_dta("carcom16.dta")
 
 ```
+
+
+
+
