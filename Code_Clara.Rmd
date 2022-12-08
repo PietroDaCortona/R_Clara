@@ -11,3 +11,28 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ## This is the environment in which we are gonna code!
+
+```{r}
+
+install.packages('haven')
+install.packages('dplyr')
+install.packages('leaken')
+install.packages('lsr')
+install.packages('labelled')
+install.packages('knitr')
+install.packages("kableExtra")
+
+library(haven)
+library(dplyr)
+library(laeken)
+library(lsr)
+library(labelled)
+library(knitr)
+library(Hmisc)
+library(kableExtra)
+
+
+shiw20 <- read.dta("rfam20.dta")
+
+
+```
