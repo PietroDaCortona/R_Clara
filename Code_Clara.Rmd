@@ -105,6 +105,22 @@ kable(table(df$df.area3Labelled), caption = 'Absolute Frequencies of Geographica
 
 ```
 
+## Italian Regions 
+
+The third variable we will use for our analysis are the Italian regions from which the surveyed population comes from
+
+```{r echo=FALSE}
+
+df$df.IregLabelled <- ordered(df$df.ireg,
+                        levels=c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20),
+                    labels=c('Piemonte', "Valle d'Aosta", 'Lombardia', 'Trentino', 'Veneto', 'Friuli', 'Liguria','Emilia Romagna', 'Toscana', 'Umbria', 'Marche', 'Lazio', 'Abruzzo', 'Molise', 'Campania', 'Puglia', 'Basilicata', 'Calabria', 'Sicilia', 'Sardegna'))
+
+kable(table(df$df.IregLabelled), caption = 'Absolute Frequencies of Italian regions in the Dataset', col.names = c('Italian regions','Frequency'), 'pipe')
+
+```
+
+
+
 ## Block 1 - STUDIO VS AREA3
 
 ------------------------------------------------------------------------
