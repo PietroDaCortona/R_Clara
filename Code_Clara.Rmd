@@ -91,9 +91,10 @@ kable(table(df$graduate), caption = 'Graduated VS Not Graduated in Absolute Term
 This second table instead divides the population between (at least) Graduated and not Graduated.
 
 ------------------------------------------------------------------------
-## Geographical Area
+### Geographical Area
 
-The second variable we will use for our analysis is the geographic area from which the surveyed population comes from
+The second variable we will use for our analysis is the geographic area from which the surveyed population comes from.
+More specifically, the variable divides Italy in three parts: North, Centre and South plus Islands.
 
 ```{r echo=FALSE}
 
@@ -105,7 +106,7 @@ kable(table(df$df.area3Labelled), caption = 'Absolute Frequencies of Geographica
 
 ```
 
-## Italian Regions 
+### Italian Regions 
 
 The third variable we will use for our analysis are the Italian regions from which the surveyed population comes from
 
