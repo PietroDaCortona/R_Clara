@@ -52,7 +52,6 @@ We are gonna do bla bla bla... Shiw 16, Bla bla bla...
 
 Here we want first to understand how our variables work, and how we can manipulate them to make them useful to our project. First we give a look at the DataFrame.
 
-
 ```{r echo=TRUE}
 
 kable(head(df), 'pipe')
@@ -62,10 +61,6 @@ kable(head(df), 'pipe')
 ### Education
 
 The first thing that we need for our analysis is Educational Attainment of the Population.
-
-
-
-
 
 ```{r echo=FALSE}
 
@@ -77,11 +72,11 @@ kable(table(df$df.studioLabelled), caption = 'Absolute Frequencies of Educationa
 
 ```
 
----
+------------------------------------------------------------------------
 
 This table shows the distribution of Educational Qualification among the population. For the purpose of the analysis, we will aggregate the observation between people at least graduate, and people at best with a diploma. We will put everything equal or higher than '3Y Degree' it into the same category, and everything lower, into another cateogory.
 
----
+------------------------------------------------------------------------
 
 ```{r,echo=FALSE}
 
@@ -91,18 +86,31 @@ kable(table(df$graduate), caption = 'Graduated VS Not Graduated in Absolute Term
 
 ```
 
----
+------------------------------------------------------------------------
 
 This second table instead divides the population between (at least) Graduated and not Graduated.
 
----
+------------------------------------------------------------------------
+## Geographical Area
+
+The second variable we will use for our analysis is the geographic area from which the surveyed population comes from
+
+```{r echo=FALSE}
+
+df$df.area3Labelled <- ordered(df$df.area3,
+                        levels=c(1,2,3),
+                        labels=c('North','Centre', 'South and Island'))
+
+kable(table(df$df.area3Labelled), caption = 'Absolute Frequencies of Geographical Area in the Dataset', col.names = c('Geografical Area','Frequency'), 'pipe')
+
+```
 
 ## Block 1 - STUDIO VS AREA3
 
----
+------------------------------------------------------------------------
 
 ## Block 2 - INCOME VS STUDIO VS IREG VS AREA3
 
----
+------------------------------------------------------------------------
 
 ## Block 3 - GEOGRAFPHICAL...
