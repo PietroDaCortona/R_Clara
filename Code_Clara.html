@@ -362,133 +362,152 @@ display: none;
 <div id="inroduction" class="section level2">
 <h2>Inroduction</h2>
 <p>We are gonna do bla bla bla… Shiw 16, Bla bla bla…</p>
-<p>##Exploratory Data Analysis</p>
+</div>
+<div id="exploratory-data-analysis" class="section level2">
+<h2>Exploratory Data Analysis</h2>
 <p>Here we want first to understand how our variables work, and how we
-can manipulate them to make them useful to our project.</p>
+can manipulate them to make them useful to our project. First we give a
+look at the DataFrame.</p>
+<pre class="r"><code>kable(head(df), &#39;pipe&#39;)</code></pre>
 <table>
-<caption>
-Absolute Frequencies of Educational Attainment in the Dataset
-</caption>
 <thead>
-<tr>
-<th style="text-align:left;">
-Educational Attainment
-</th>
-<th style="text-align:right;">
-Frequency
-</th>
+<tr class="header">
+<th align="right">df.studio</th>
+<th align="right">df.y</th>
+<th align="right">df.area3</th>
+<th align="right">df.ireg</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:left;">
-1
-</td>
-<td style="text-align:right;">
-400
-</td>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">17010.000</td>
+<td align="right">3</td>
+<td align="right">20</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-2
-</td>
-<td style="text-align:right;">
-2495
-</td>
+<tr class="even">
+<td align="right">2</td>
+<td align="right">11713.000</td>
+<td align="right">3</td>
+<td align="right">20</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-3
-</td>
-<td style="text-align:right;">
-3324
-</td>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">20454.979</td>
+<td align="right">3</td>
+<td align="right">17</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-4
-</td>
-<td style="text-align:right;">
-966
-</td>
+<tr class="even">
+<td align="right">2</td>
+<td align="right">9600.000</td>
+<td align="right">3</td>
+<td align="right">17</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-5
-</td>
-<td style="text-align:right;">
-3194
-</td>
+<tr class="odd">
+<td align="right">3</td>
+<td align="right">9865.201</td>
+<td align="right">3</td>
+<td align="right">18</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-6
-</td>
-<td style="text-align:right;">
-187
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-7
-</td>
-<td style="text-align:right;">
-1225
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-8
-</td>
-<td style="text-align:right;">
-97
-</td>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">4290.000</td>
+<td align="right">3</td>
+<td align="right">18</td>
 </tr>
 </tbody>
 </table>
-<p>We know from the <a href="https://www.bancaditalia.it/statistiche/tematiche/indagini-famiglie-imprese/bilanci-famiglie/documentazione/documenti/2016/Quest_eng2016.pdf?language_id=1">documentation</a>
-that 6 is equal to 3y-degree. So we will put everything equal or higher
-than it into the same category, and everythin lower, into another
-cateogory.</p>
+<div id="education" class="section level3">
+<h3>Education</h3>
+<p>The first thing that we need for our analysis is Educational
+Attainment of the Population.</p>
 <table>
-<caption>
-Graduated VS Not Graduated in Absolute Terms in the Dataset
-</caption>
+<caption>Absolute Frequencies of Educational Attainment in the
+Dataset</caption>
 <thead>
-<tr>
-<th style="text-align:left;">
-…
-</th>
-<th style="text-align:right;">
-Frequency
-</th>
+<tr class="header">
+<th align="left">Educational Attainment</th>
+<th align="right">Frequency</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:left;">
-At least Graudated
-</td>
-<td style="text-align:right;">
-1509
-</td>
+<tr class="odd">
+<td align="left">None</td>
+<td align="right">400</td>
 </tr>
-<tr>
-<td style="text-align:left;">
-Not Graduated
-</td>
-<td style="text-align:right;">
-10379
-</td>
+<tr class="even">
+<td align="left">Primary</td>
+<td align="right">2495</td>
+</tr>
+<tr class="odd">
+<td align="left">Lower Secondary</td>
+<td align="right">3324</td>
+</tr>
+<tr class="even">
+<td align="left">Vocational Diploma</td>
+<td align="right">966</td>
+</tr>
+<tr class="odd">
+<td align="left">Upper Secondary Diplomae</td>
+<td align="right">3194</td>
+</tr>
+<tr class="even">
+<td align="left">3y Degree</td>
+<td align="right">187</td>
+</tr>
+<tr class="odd">
+<td align="left">5y Degree</td>
+<td align="right">1225</td>
+</tr>
+<tr class="even">
+<td align="left">Postgraduate</td>
+<td align="right">97</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<p>##Block 1 - STUDIO VS AREA3</p>
+<p>This table shows the distribution of Educational Qualification among
+the population. For the purpose of the analysis, we will aggregate the
+observation between people at least graduate, and people at best with a
+diploma. We will put everything equal or higher than ‘3Y Degree’ it into
+the same category, and everything lower, into another cateogory.</p>
 <hr />
-<p>##Block 2 - INCOME VS STUDIO VS IREG VS AREA3</p>
+<table>
+<caption>Graduated VS Not Graduated in Absolute Terms in the
+Dataset</caption>
+<thead>
+<tr class="header">
+<th align="left">Variable</th>
+<th align="right">Frequency</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">At least Graudated</td>
+<td align="right">1509</td>
+</tr>
+<tr class="even">
+<td align="left">Not Graduated</td>
+<td align="right">10379</td>
+</tr>
+</tbody>
+</table>
 <hr />
-<p>##Block 3 - GEOGRAFPHICAL…</p>
+<p>This second table instead divides the population between (at least)
+Graduated and not Graduated.</p>
+<hr />
+</div>
+</div>
+<div id="block-1---studio-vs-area3" class="section level2">
+<h2>Block 1 - STUDIO VS AREA3</h2>
+<hr />
+</div>
+<div id="block-2---income-vs-studio-vs-ireg-vs-area3" class="section level2">
+<h2>Block 2 - INCOME VS STUDIO VS IREG VS AREA3</h2>
+<hr />
+</div>
+<div id="block-3---geografphical" class="section level2">
+<h2>Block 3 - GEOGRAFPHICAL…</h2>
 </div>
 </div>
 

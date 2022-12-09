@@ -48,35 +48,61 @@ df <- data.frame(df$studio,df$y,df$area3,df$ireg)
 
 We are gonna do bla bla bla... Shiw 16, Bla bla bla...
 
-##Exploratory Data Analysis
+## Exploratory Data Analysis
 
-Here we want first to understand how our variables work, and how we can manipulate them to make them useful to our project.
+Here we want first to understand how our variables work, and how we can manipulate them to make them useful to our project. First we give a look at the DataFrame.
+
+
+```{r echo=TRUE}
+
+kable(head(df), 'pipe')
+
+```
+
+### Education
+
+The first thing that we need for our analysis is Educational Attainment of the Population.
+
+
+
+
 
 ```{r echo=FALSE}
 
-kable(table(df$df.studio), caption = 'Absolute Frequencies of Educational Attainment in the Dataset', col.names = c('Educational Attainment','Frequency'))
+df$df.studioLabelled <- ordered(df$df.studio,
+                        levels=c(1,2,3,4,5,6,7,8),
+                        labels=c('None','Primary','Lower Secondary','Vocational Diploma','Upper Secondary Diplomae','3y Degree','5y Degree','Postgraduate'))
+
+kable(table(df$df.studioLabelled), caption = 'Absolute Frequencies of Educational Attainment in the Dataset', col.names = c('Educational Attainment','Frequency'), 'pipe')
 
 ```
 
-We know from the [documentation](https://www.bancaditalia.it/statistiche/tematiche/indagini-famiglie-imprese/bilanci-famiglie/documentazione/documenti/2016/Quest_eng2016.pdf?language_id=1) that 6 is equal to 3y-degree. So we will put everything equal or higher than it into the same category, and everythin lower, into another cateogory.
+---
 
-```{r, echo=FALSE}
+This table shows the distribution of Educational Qualification among the population. For the purpose of the analysis, we will aggregate the observation between people at least graduate, and people at best with a diploma. We will put everything equal or higher than '3Y Degree' it into the same category, and everything lower, into another cateogory.
+
+---
+
+```{r,echo=FALSE}
 
 df$graduate <- ifelse(df$df.studio>=6,'At least Graudated','Not Graduated')
 
-
-
-kable(table(df$graduate), caption = 'Graduated VS Not Graduated in Absolute Terms in the Dataset', col.names = c('...','Frequency'))
+kable(table(df$graduate), caption = 'Graduated VS Not Graduated in Absolute Terms in the Dataset', col.names = c('Variable','Frequency'), 'pipe')
 
 ```
----
-
-##Block 1 - STUDIO VS AREA3
 
 ---
 
-##Block 2 - INCOME VS STUDIO VS IREG VS AREA3
+This second table instead divides the population between (at least) Graduated and not Graduated.
 
 ---
 
-##Block 3 - GEOGRAFPHICAL...
+## Block 1 - STUDIO VS AREA3
+
+---
+
+## Block 2 - INCOME VS STUDIO VS IREG VS AREA3
+
+---
+
+## Block 3 - GEOGRAFPHICAL...
