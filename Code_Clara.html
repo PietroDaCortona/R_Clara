@@ -417,6 +417,7 @@ look at the DataFrame.</p>
 </tr>
 </tbody>
 </table>
+<pre class="r"><code>#I give a check to the DF that we will use.</code></pre>
 <div id="education" class="section level3">
 <h3>Education</h3>
 <p>The first thing that we need for our analysis is Educational
@@ -496,6 +497,208 @@ Dataset</caption>
 <p>This second table instead divides the population between (at least)
 Graduated and not Graduated.</p>
 <hr />
+</div>
+<div id="geographical-area" class="section level3">
+<h3>Geographical Area</h3>
+<p>The second variable we will use for our analysis is the geographic
+area from which the surveyed population comes from. More specifically,
+the variable divides Italy in three parts: North, Centre and South plus
+Islands.</p>
+<table>
+<caption>Absolute Frequencies of Geographical Area in the
+Dataset</caption>
+<thead>
+<tr class="header">
+<th align="left">Geografical Area</th>
+<th align="right">Frequency</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">North</td>
+<td align="right">5210</td>
+</tr>
+<tr class="even">
+<td align="left">Centre</td>
+<td align="right">2661</td>
+</tr>
+<tr class="odd">
+<td align="left">South and Island</td>
+<td align="right">4017</td>
+</tr>
+</tbody>
+</table>
+<hr />
+</div>
+<div id="italian-regions" class="section level3">
+<h3>Italian Regions</h3>
+<p>The third variable we will use for our analysis are the Italian
+regions from which the surveyed population comes from</p>
+<table>
+<caption>Absolute Frequencies of Italian regions in the
+Dataset</caption>
+<thead>
+<tr class="header">
+<th align="left">Italian regions</th>
+<th align="right">Frequency</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Piemonte</td>
+<td align="right">1017</td>
+</tr>
+<tr class="even">
+<td align="left">Valle d’Aosta</td>
+<td align="right">51</td>
+</tr>
+<tr class="odd">
+<td align="left">Lombardia</td>
+<td align="right">1341</td>
+</tr>
+<tr class="even">
+<td align="left">Trentino</td>
+<td align="right">364</td>
+</tr>
+<tr class="odd">
+<td align="left">Veneto</td>
+<td align="right">753</td>
+</tr>
+<tr class="even">
+<td align="left">Friuli</td>
+<td align="right">285</td>
+</tr>
+<tr class="odd">
+<td align="left">Liguria</td>
+<td align="right">417</td>
+</tr>
+<tr class="even">
+<td align="left">Emilia Romagna</td>
+<td align="right">982</td>
+</tr>
+<tr class="odd">
+<td align="left">Toscana</td>
+<td align="right">911</td>
+</tr>
+<tr class="even">
+<td align="left">Umbria</td>
+<td align="right">455</td>
+</tr>
+<tr class="odd">
+<td align="left">Marche</td>
+<td align="right">594</td>
+</tr>
+<tr class="even">
+<td align="left">Lazio</td>
+<td align="right">701</td>
+</tr>
+<tr class="odd">
+<td align="left">Abruzzo</td>
+<td align="right">322</td>
+</tr>
+<tr class="even">
+<td align="left">Molise</td>
+<td align="right">179</td>
+</tr>
+<tr class="odd">
+<td align="left">Campania</td>
+<td align="right">1007</td>
+</tr>
+<tr class="even">
+<td align="left">Puglia</td>
+<td align="right">679</td>
+</tr>
+<tr class="odd">
+<td align="left">Basilicata</td>
+<td align="right">203</td>
+</tr>
+<tr class="even">
+<td align="left">Calabria</td>
+<td align="right">282</td>
+</tr>
+<tr class="odd">
+<td align="left">Sicilia</td>
+<td align="right">852</td>
+</tr>
+<tr class="even">
+<td align="left">Sardegna</td>
+<td align="right">493</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="net-disposable-income-per-capita" class="section level3">
+<h3>Net Disposable Income Per Capita</h3>
+<p>Net Disposable Income is the total income available after that all
+the transfers (taxes, deductions, etc) have been taken into account. It
+is the total amount of money that a person can effectively spend.</p>
+<p>First we are going to check whether there are any missing values.</p>
+<pre class="r"><code>anyNA(df$df.y)</code></pre>
+<pre><code>## [1] FALSE</code></pre>
+<p>Everything looks fine from that point of view.</p>
+<p>Then we are going to have a further look to the data.</p>
+<pre class="r"><code>describe(df$df.y)</code></pre>
+<pre><code>## df$df.y 
+##        n  missing distinct     Info     Mean      Gmd      .05      .10 
+##    11888        0     7171        1    19030    13289     3600     5850 
+##      .25      .50      .75      .90      .95 
+##    10750    16900    23902    32288    40673 
+## 
+## lowest :  -6763.192  -4321.011  -3918.000  -2530.282  -2000.000
+## highest: 218945.109 229472.922 273079.000 277609.969 541879.188</code></pre>
+<p>As we can see from the ‘describe’ function, there are some negative
+values. Given that it is impossible to have a negative Net Disposable
+Income, we have to further investigate to clear the problem.</p>
+<pre class="r"><code>table(df$df.y&lt;0)</code></pre>
+<pre><code>## 
+## FALSE  TRUE 
+## 11874    14</code></pre>
+<p>There are 14 Values lower than 0 (The TRUE ones), out of 11888. We
+chose to recode the negative observations into positive.</p>
+<pre class="r"><code>df$df.y &lt;- ifelse(df$df.y&lt;=0, df$df.y*-1, df$df.y)
+
+table(df$df.y&lt;0)</code></pre>
+<pre><code>## 
+## FALSE 
+## 11888</code></pre>
+<p>Now that we are done with the resetting of the negative values, we
+can give a proper look to the data.</p>
+<table>
+<colgroup>
+<col width="12%" />
+<col width="11%" />
+<col width="14%" />
+<col width="5%" />
+<col width="15%" />
+<col width="9%" />
+<col width="15%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Variable</th>
+<th align="left">Mean</th>
+<th align="left">Sd</th>
+<th align="left">Min</th>
+<th align="left">Pctile[25]</th>
+<th align="left">Median</th>
+<th align="left">Pctile[75]</th>
+<th align="left">Max</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Income</td>
+<td align="left">19035.3</td>
+<td align="left">15165.368</td>
+<td align="left">0</td>
+<td align="left">10750</td>
+<td align="left">16900</td>
+<td align="left">23901.539</td>
+<td align="left">541879.188</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div id="block-1---studio-vs-area3" class="section level2">
