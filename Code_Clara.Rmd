@@ -237,6 +237,27 @@ BLA BLA BLA. I think we can conclude this part with some observations on this ta
 
 ## Block 1 - STUDIO VS AREA3
 
+Our first analysis is going to compare Educational attainment for the different Geographical Areas
+
+```{r,echo=FALSE}
+# I have to change the order of this variable so that noth is on top (only for horizontal)
+df$df.area3HLabelled = ordered(df$df.area3,
+                        levels=c(3,2,1),
+                        labels=c('South and Island','Centre', 'North'))
+```
+
+```{r}
+g <- ggplot(df, aes(df.area3HLabelled))
+g + geom_bar(aes(fill=df.studioLabelled), width = 0.5) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas unadjusted", x= "Geographical Area", y= "count", fill="Educational Attainment") + coord_flip()
+```
+The following graph shows educational attainment not adjusted for population, let's adjust it
+
+```{r}
+g <- ggplot(df, aes(df.area3HLabelled))
+g + geom_bar(aes(fill=df.studioLabelled), width = 0.5) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "count", fill="Educational Attainment") + coord_flip()
+
+#trying to figure out how to make the bars 100%
+```
 ------------------------------------------------------------------------
 
 ## Block 2 - INCOME VS STUDIO VS IREG VS AREA3
