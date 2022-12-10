@@ -253,10 +253,16 @@ g + geom_bar(aes(fill=df.studioLabelled), width = 0.5) + labs(title="Histogram o
 The following graph shows educational attainment not adjusted for population, let's adjust it
 
 ```{r}
-g <- ggplot(df, aes(df.area3HLabelled))
-g + geom_bar(aes(fill=df.studioLabelled), width = 0.5) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "count", fill="Educational Attainment") + coord_flip()
+df$df.farea3HLabelled <- as.factor(df$df.area3HLabelled)
+df$df.fstudioLabelled <- as.factor(df$df.studioLabelled)
+```
 
-#trying to figure out how to make the bars 100%
+```{r}
+g <- ggplot(df, aes(farea3HLabelled))
+g + geom_bar(aes(df$df.fstudioLabelled),position="fill") + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "count", fill="Educational Attainment") + coord_flip()
+
+
+#for some reason i cannot run this code .. can you?
 ```
 ------------------------------------------------------------------------
 
