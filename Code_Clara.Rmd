@@ -256,6 +256,8 @@ The following graph shows educational attainment not adjusted for population, le
 df$df.farea3HLabelled <- as.factor(df$df.area3HLabelled)
 df$df.fstudioLabelled <- as.factor(df$df.studioLabelled)
 ```
+----
+
 
 ```{r}
 g <- ggplot(df, aes(farea3HLabelled))
@@ -264,6 +266,7 @@ g + geom_bar(aes(df$df.fstudioLabelled),position="fill") + labs(title="Histogram
 
 #for some reason i cannot run this code .. can you?
 ```
+
 ------------------------------------------------------------------------
 
 ## Block 2 - INCOME VS STUDIO VS IREG VS AREA3
