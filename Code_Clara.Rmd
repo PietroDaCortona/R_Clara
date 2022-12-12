@@ -246,9 +246,9 @@ df$df.area3HLabelled = ordered(df$df.area3,
                         labels=c('South and Island','Centre', 'North'))
 ```
 
-```{r}
+```{r fig.asp = 0.5, fig.width = 5.5}
 g <- ggplot(df, aes(df.area3HLabelled))
-g + geom_bar(aes(fill=df.studioLabelled), width = 0.5) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas unadjusted", x= "Geographical Area", y= "count", fill="Educational Attainment") + coord_flip()
+g + geom_bar(aes(fill=df.studioLabelled), width = 0.7) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas unadjusted", x= "Geographical Area", y= "count", fill="Educational Attainment") + coord_flip()
 ```
 The following graph shows educational attainment not adjusted for population, let's adjust it
 
@@ -259,12 +259,10 @@ df$df.fstudioLabelled <- as.factor(df$df.studioLabelled)
 ----
 
 
-```{r}
-g <- ggplot(df, aes(farea3HLabelled))
-g + geom_bar(aes(df$df.fstudioLabelled),position="fill") + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "count", fill="Educational Attainment") + coord_flip()
+```{r fig.asp = 0.5, fig.width = 5.5}
+g <- ggplot(df, aes(x=df.farea3HLabelled, fill= df.fstudioLabelled))
+g + geom_bar(position="fill", width = 0.7) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + stat_count(geom = "text", aes(label = paste(round(after_stat(count)/sum(after_stat(count))*100), "%")), position=position_fill(vjust=0.5), colour="white") + coord_flip()
 
-
-#for some reason i cannot run this code .. can you?
 ```
 
 ------------------------------------------------------------------------
