@@ -94,7 +94,11 @@ This table shows the distribution of Educational Qualification among the populat
 
 ```{r,echo=FALSE}
 
-df$graduate <- ifelse(df$df.studio>=6,'At least Graudated','Not Graduated')
+df$graduate <- ifelse(df$df.studio>=6,1,2)
+
+df$graduate <- ordered(df$graduate,
+                        levels=c(1,2),
+                        labels=c('At least Graduated','Not Graduated'))
 
 kable(table(df$graduate), caption = 'Graduated VS Not Graduated in Absolute Terms in the Dataset', col.names = c('Variable','Frequency'), 'pipe')
 
@@ -244,6 +248,10 @@ Our first analysis is going to compare Educational attainment for the different 
 df$df.area3HLabelled = ordered(df$df.area3,
                         levels=c(3,2,1),
                         labels=c('South and Island','Centre', 'North'))
+
+
+df$ordgraduate = ordered(df$graduate,
+                        levels=c('Not Graduated','At least Graduated'))
 ```
 
 ```{r fig.asp = 0.5, fig.width = 5.5}
@@ -265,9 +273,60 @@ g + geom_bar(position="fill", width = 0.7) + labs(title="Histogram on Education 
 
 ```
 
+```{r fig.asp = 0.5, fig.width = 5.5}
+g <- ggplot(df, aes(x=df.farea3HLabelled, fill= ordgraduate))
+g + geom_bar(position="fill", width = 0.7) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + stat_count(geom = "text", aes(label = paste(round(after_stat(count)/sum(after_stat(count))*100), "%")), position=position_fill(vjust=0.5), colour="white") + coord_flip()
+
+```
+
+
+
 ------------------------------------------------------------------------
 
 ## Block 2 - INCOME VS STUDIO VS IREG VS AREA3
+
+we are going to look now only at the people that graduated 
+
+```{r}
+dfg <- subset(df, graduate == 'At least Graduated')
+```
+
+```{r}
+
+#find mean points scored by team 
+dfg %>%
+  group_by(df.IregLabelled) %>%
+  summarise(
+    median_regincome = sort(rep(patient_age,number_patients))[length(rep(patient_age,number_patients))/2]
+  )
+```
+
+```{r}
+
+
+# Ranking - Lollipop chart
+# Prepare data: group mean city mileage by manufacturer.
+reg_income <- aggregate(dfg$Income, by=list(dfg$IregLabelled), FUN=mean)  # aggregate
+colnames(reg_income) <- c("region", "income")  # change column names
+reg_income <- reg_income[order(reg_income$income), ]  # sort
+reg_income$region <- factor(reg_income$region, levels = reg_income$region)  # to retain the order in plot.
+head(reg_income, 4)
+```
+
+
+
+# Plot lollipop chart
+ggplot(cty_mpg, aes(x=make, y=mileage)) + 
+  geom_point(size=3) + 
+  geom_segment(aes(x=make, 
+                   xend=make, 
+                   y=0, 
+                   yend=mileage)) + 
+  labs(title="Lollipop Chart", 
+       subtitle="Make Vs Avg. Mileage", 
+       caption="source: mpg") + 
+  theme(axis.text.x = element_text(angle=65, vjust=0.6))
+```
 
 ------------------------------------------------------------------------
 
