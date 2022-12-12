@@ -264,6 +264,8 @@ The following graph shows educational attainment not adjusted for population, le
 df$df.farea3HLabelled <- as.factor(df$df.area3HLabelled)
 df$df.fstudioLabelled <- as.factor(df$df.studioLabelled)
 ```
+
+
 ----
 
 
@@ -293,37 +295,28 @@ dfg <- subset(df, graduate == 'At least Graduated')
 
 ```{r}
 
-#find mean points scored by team 
-dfg %>%
-  group_by(df.IregLabelled) %>%
-  summarise(
-    median_regincome = sort(rep(patient_age,number_patients))[length(rep(patient_age,number_patients))/2]
-  )
+
+#Calculate mean income by region
+reg_income <- dfg %>% group_by(df.IregLabelled) %>% summarise(across(Income, median, na.rm = TRUE))
+colnames(reg_income) <- c("Region", "Income")  # change column names
+reg_income <- reg_income[order(reg_income$Income), ]  # sort
+reg_income$Region <- factor(reg_income$Region, levels = reg_income$Region)  # to retain the order in plot.
+reg_income
+
 ```
+
+
 
 ```{r}
-
-
-# Ranking - Lollipop chart
-# Prepare data: group mean city mileage by manufacturer.
-reg_income <- aggregate(dfg$Income, by=list(dfg$IregLabelled), FUN=mean)  # aggregate
-colnames(reg_income) <- c("region", "income")  # change column names
-reg_income <- reg_income[order(reg_income$income), ]  # sort
-reg_income$region <- factor(reg_income$region, levels = reg_income$region)  # to retain the order in plot.
-head(reg_income, 4)
-```
-
-
-
 # Plot lollipop chart
-ggplot(cty_mpg, aes(x=make, y=mileage)) + 
+ggplot(reg_income, aes(x=Region, y=Income)) + 
   geom_point(size=3) + 
-  geom_segment(aes(x=make, 
-                   xend=make, 
+  geom_segment(aes(x=Region, 
+                   xend=Region, 
                    y=0, 
-                   yend=mileage)) + 
+                   yend=Income)) + 
   labs(title="Lollipop Chart", 
-       subtitle="Make Vs Avg. Mileage", 
+       subtitle="Region Vs median income of Graduates", 
        caption="source: mpg") + 
   theme(axis.text.x = element_text(angle=65, vjust=0.6))
 ```
