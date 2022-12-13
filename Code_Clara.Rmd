@@ -13,6 +13,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # NOTE: Before running the code, remove the '#' from 'Install.packages(x)'. Before running the 'Knit', add '#' to 'Install Package'.
 
+#turn scientific notions off
+options(scipen = 9)
 
 #install.packages('haven')
 #install.packages('dplyr')
@@ -84,8 +86,7 @@ kable(table(df$df.studioLabelled), caption = 'Absolute Frequencies of Educationa
 #I cerate a variable, which is a copy of the previous Variable, but labelled. So I can create a nice table with labels instead of numbers. This Variables is gonna be used only for viz purposes.
 
 ```
-  
-  
+
 ------------------------------------------------------------------------
 
 This table shows the distribution of Educational Qualification among the population. For the purpose of the analysis, we will aggregate the observation between people at least graduate, and people at best with a diploma. We will put everything equal or higher than '3Y Degree' it into the same category, and everything lower, into another cateogory.
@@ -105,7 +106,6 @@ kable(table(df$graduate), caption = 'Graduated VS Not Graduated in Absolute Term
 #I create a Varibale in Which I say : If your ED level is higher or equal than 6, which is '3Y graduate', you get assigned to the first group, IN ANY OTHER CASE, you get assigned to the second group.
 
 ```
-
 
 ------------------------------------------------------------------------
 
@@ -129,7 +129,6 @@ kable(table(df$df.area3Labelled), caption = 'Absolute Frequencies of Geographica
 
 ```
 
-
 ------------------------------------------------------------------------
 
 ### Italian Regions
@@ -148,7 +147,6 @@ kable(table(df$df.IregLabelled), caption = 'Absolute Frequencies of Italian regi
 
 ```
 
-
 ### Net Disposable Income Per Capita
 
 Net Disposable Income is the total income available after that all the transfers (taxes, deductions, etc) have been taken into account. It is the total amount of money that a person can effectively spend.
@@ -161,11 +159,11 @@ First we are going to check whether there are any missing values.
 
 ```
 
-
 ```{r}
 anyNA(df$df.y)
 
 ```
+
 Everything looks fine from that point of view.
 
 Then we are going to have a further look to the data.
@@ -176,8 +174,7 @@ Then we are going to have a further look to the data.
 
 ```
 
-
-``` {r}
+```{r}
 describe(df$df.y)
 ```
 
@@ -188,7 +185,6 @@ As we can see from the 'describe' function, there are some negative values. Give
 #I ask for a table to compare values under 0 and values over 0.
 
 ```
-
 
 ```{r}
 table(df$df.y<0)
@@ -203,7 +199,6 @@ There are 14 Values lower than 0 (The TRUE ones), out of 11888. We chose to reco
 
 ```
 
-
 ```{r}
 df$df.y <- ifelse(df$df.y<=0, df$df.y*-1, df$df.y)
 
@@ -213,8 +208,7 @@ table(df$df.y<0)
 
 Now that we are done with the resetting of the negative values, we can give a proper look to the data.
 
----
-
+------------------------------------------------------------------------
 
 ```{r, echo=FALSE}
 
@@ -230,14 +224,9 @@ kable(st(df, vars = 'Income', factor.numeric = TRUE, summ =  c('mean(x)', 'sd(x)
 
 ```
 
-
 BLA BLA BLA. I think we can conclude this part with some observations on this table, and then go further.
 
-
----
-
-
-
+------------------------------------------------------------------------
 
 ## Block 1 - STUDIO VS AREA3
 
@@ -258,6 +247,7 @@ df$ordgraduate = ordered(df$graduate,
 g <- ggplot(df, aes(df.area3HLabelled))
 g + geom_bar(aes(fill=df.studioLabelled), width = 0.7) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas unadjusted", x= "Geographical Area", y= "count", fill="Educational Attainment") + coord_flip()
 ```
+
 The following graph shows educational attainment not adjusted for population, let's adjust it
 
 ```{r}
@@ -265,9 +255,7 @@ df$df.farea3HLabelled <- as.factor(df$df.area3HLabelled)
 df$df.fstudioLabelled <- as.factor(df$df.studioLabelled)
 ```
 
-
-----
-
+------------------------------------------------------------------------
 
 ```{r fig.asp = 0.5, fig.width = 5.5}
 g <- ggplot(df, aes(x=df.farea3HLabelled, fill= df.fstudioLabelled))
@@ -281,16 +269,21 @@ g + geom_bar(position="fill", width = 0.7) + labs(title="Histogram on Education 
 
 ```
 
-
-
 ------------------------------------------------------------------------
 
 ## Block 2 - INCOME VS STUDIO VS IREG VS AREA3
 
-we are going to look now only at the people that graduated 
+we are going to look now only at the people that graduated
 
 ```{r}
 dfg <- subset(df, graduate == 'At least Graduated')
+```
+
+
+Let's calculate the median income of Graduates in Italy
+
+```{r}
+median(dfg$Income)
 ```
 
 ```{r}
@@ -305,8 +298,6 @@ reg_income
 
 ```
 
-
-
 ```{r}
 # Plot lollipop chart
 ggplot(reg_income, aes(x=Region, y=Income)) + 
@@ -319,6 +310,13 @@ ggplot(reg_income, aes(x=Region, y=Income)) +
        subtitle="Region Vs median income of Graduates", 
        caption="source: mpg") + 
   theme(axis.text.x = element_text(angle=65, vjust=0.6))
+```
+
+
+```{r}
+g <- ggplot( dfg,aes(df.IregLabelled, Income))
+g + geom_boxplot() + coord_flip() + labs(title="Distribution of Income in Italy of Graduates",subtitle="Income distribution in the different Italian regions of graduates. \nOverall median income of graduates in Italy in red", x= "Geographical Area", y= "Income") + geom_hline(yintercept=24374.96, color = "red")
+
 ```
 
 ------------------------------------------------------------------------
