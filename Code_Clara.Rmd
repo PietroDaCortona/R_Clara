@@ -16,14 +16,14 @@ knitr::opts_chunk$set(echo = TRUE)
 #turn scientific notions off
 options(scipen = 9)
 
-#install.packages('haven')
-#install.packages('dplyr')
-#install.packages('leaken')
-#install.packages('lsr')
-#install.packages('labelled')
-#install.packages('knitr')
-#install.packages("kableExtra")
-#install.packages('vtable')
+install.packages('haven')
+install.packages('dplyr')
+install.packages('leaken')
+install.packages('lsr')
+install.packages('labelled')
+install.packages('knitr')
+install.packages("kableExtra")
+install.packages('vtable')
 
 
 
