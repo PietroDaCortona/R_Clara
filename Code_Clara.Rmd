@@ -236,6 +236,8 @@ BLA BLA BLA. I think we can conclude this part with some observations on this ta
 
 ## Block 1 - STUDIO VS AREA3
 
+## Block 1 - STUDIO VS AREA3
+
 Our first analysis is going to compare Educational attainment for the different Geographical Areas
 
 ```{r,echo=FALSE}
@@ -264,16 +266,43 @@ df$df.fstudioLabelled <- as.factor(df$df.studioLabelled)
 ------------------------------------------------------------------------
 
 ```{r fig.asp = 0.5, fig.width = 5.5}
+
+ percentData <- df  %>% group_by(df.farea3HLabelled) %>% count(df.fstudioLabelled) %>%
+    mutate(ratio=scales::percent(n/sum(n),accuracy = 1))
+
 g <- ggplot(df, aes(x=df.farea3HLabelled, fill= df.fstudioLabelled))
-g + geom_bar(position="fill", width = 0.7) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + stat_count(geom = "text", aes(label = paste(round(after_stat(count)/sum(after_stat(count))*100), "%")), position=position_fill(vjust=0.5), colour="white") + coord_flip()
+g + geom_bar(position="fill", width = 0.7) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + geom_text(data=percentData, aes(y=n,label=ratio), position=position_fill(vjust=0.5),colour="white") + coord_flip()
+
+
 
 ```
 
 ```{r fig.asp = 0.5, fig.width = 5.5}
+
+
+percentData <- df  %>% group_by(df.farea3HLabelled) %>% count(ordgraduate) %>%
+    mutate(ratio=scales::percent(n/sum(n),accuracy = 1))
+
 g <- ggplot(df, aes(x=df.farea3HLabelled, fill= ordgraduate))
-g + geom_bar(position="fill", width = 0.7) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + stat_count(geom = "text", aes(label = paste(round(after_stat(count)/sum(after_stat(count))*100), "%")), position=position_fill(vjust=0.5), colour="white") + coord_flip()
+g + geom_bar(position="fill", width = 0.7) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + geom_text(data=percentData, aes(y=n,label=ratio), position=position_fill(vjust=0.5),colour="white") + coord_flip()
+
 
 ```
+
+
+
+
+```{r fig.asp = 0.5, fig.width = 5.5}
+
+percentData <- df  %>% group_by(df.IregLabelled) %>% count(df.fstudioLabelled) %>%
+    mutate(ratio=scales::percent(n/sum(n),accuracy = 1))
+
+g <- ggplot(df, aes(x=df.IregLabelled, fill= df.fstudioLabelled))
+g + geom_bar(position="fill", width = 0.7) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + geom_text(data=percentData, aes(y=n,label=ratio), position=position_fill(vjust=0.5),colour="white") + coord_flip()
+```
+
+
+
 
 ------------------------------------------------------------------------
 
