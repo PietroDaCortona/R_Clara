@@ -1,0 +1,408 @@
+---
+title: "duplicate code_clara"
+author: "clara"
+date: "2022-12-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, include=FALSE, echo=FALSE}
+
+# NOTE: Before running the code, remove the '#' from 'Install.packages(x)'. Before running the 'Knit', add '#' to 'Install Package'.
+
+#turn scientific notions off
+options(scipen = 9)
+
+#install.packages('haven')
+#install.packages('dplyr')
+#install.packages('leaken')
+#install.packages('lsr')
+#install.packages('labelled')
+#install.packages('knitr')
+#install.packages("kableExtra")
+#install.packages('vtable')
+#install.packages("ggplot2")
+
+
+library(haven)
+library(dplyr)
+library(laeken)
+library(lsr)
+library(labelled)
+library(knitr)
+library(Hmisc)
+library(kableExtra)
+library(vtable)
+library(ggplot2)
+
+
+
+rper <- read_dta("rper16.dta")
+carcom <- read_dta('carcom16.dta')
+q16a <- read_dta('q16a.dta')
+
+#I load all the dataframes parts that I want.
+
+df <- merge(carcom, q16a, on='nquest')
+df <- merge(df, rper, by=c('nquest','nord'))
+remove('carcom','q16a','rper')
+df <- data.frame(df$studio,df$y,df$area3,df$ireg)
+
+#I merge them, I remove the single components of the dataframe, and I select only the Variables that I want.
+
+#DF is the final dataframe containing only: Educational Attainment (STUDIO), Income per Capita(Y), Geog area(AREA3), Region(IREG).
+```
+
+# TITLE
+
+## Inroduction
+
+We are gonna do bla bla bla... Shiw 16, Bla bla bla...
+
+## Exploratory Data Analysis
+
+Here we want first to understand how our variables work, and how we can manipulate them to make them useful to our project. First we give a look at the DataFrame.
+
+```{r echo=TRUE}
+
+kable(head(df), 'pipe')
+
+#I give a check to the DF that we will use.
+
+```
+
+
+### Education
+
+The first thing that we need for our analysis is Educational Attainment of the Population.
+
+```{r echo=FALSE}
+
+df$df.studioLabelled <- ordered(df$df.studio,
+                        levels=c(1,2,3,4,5,6,7,8),
+                        labels=c('None','Primary','Lower Secondary','Vocational Diploma','Upper Secondary Diplomae','3y Degree','5y Degree','Postgraduate'))
+
+kable(table(df$df.studioLabelled), caption = 'Absolute Frequencies of Educational Attainment in the Dataset', col.names = c('Educational Attainment','Frequency'), 'pipe')
+
+#I cerate a variable, which is a copy of the previous Variable, but labelled. So I can create a nice table with labels instead of numbers. This Variables is gonna be used only for viz purposes.
+
+```
+
+------------------------------------------------------------------------
+
+This table shows the distribution of Educational Qualification among the population. For the purpose of the analysis, we will aggregate the observation between people at least graduate, and people at best with a diploma. We will put everything equal or higher than '3Y Degree' it into the same category, and everything lower, into another cateogory.
+
+------------------------------------------------------------------------
+
+```{r,echo=FALSE}
+
+df$graduate <- ifelse(df$df.studio>=6,1,2)
+
+df$graduate <- ordered(df$graduate,
+                        levels=c(1,2),
+                        labels=c('At least Graduated','Not Graduated'))
+
+kable(table(df$graduate), caption = 'Graduated VS Not Graduated in Absolute Terms in the Dataset', col.names = c('Variable','Frequency'), 'pipe')
+
+#I create a Varibale in Which I say : If your ED level is higher or equal than 6, which is '3Y graduate', you get assigned to the first group, IN ANY OTHER CASE, you get assigned to the second group.
+
+```
+
+------------------------------------------------------------------------
+
+This second table instead divides the population between (at least) Graduated and not Graduated.
+
+------------------------------------------------------------------------
+
+### Geographical Area
+
+The second variable we will use for our analysis is the geographic area from which the surveyed population comes from. More specifically, the variable divides Italy in three parts: North, Centre and South plus Islands.
+
+```{r echo=FALSE}
+
+df$df.area3Labelled <- ordered(df$df.area3,
+                        levels=c(1,2,3),
+                        labels=c('North','Centre', 'South and Island'))
+
+kable(table(df$df.area3Labelled), caption = 'Absolute Frequencies of Geographical Area in the Dataset', col.names = c('Geografical Area','Frequency'), 'pipe')
+
+#I cerate a variable, which is a copy of the previous Variable, but labelled. So I can create a nice table with labels instead of numbers. This Variables is gonna be used only for viz purposes.
+
+```
+
+------------------------------------------------------------------------
+
+### Italian Regions
+
+The third variable we will use for our analysis are the Italian regions from which the surveyed population comes from
+
+```{r echo=FALSE}
+
+df$df.IregLabelled <- ordered(df$df.ireg,
+                        levels=c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20),
+                    labels=c('Piemonte', "Valle d'Aosta", 'Lombardia', 'Trentino', 'Veneto', 'Friuli', 'Liguria','Emilia Romagna', 'Toscana', 'Umbria', 'Marche', 'Lazio', 'Abruzzo', 'Molise', 'Campania', 'Puglia', 'Basilicata', 'Calabria', 'Sicilia', 'Sardegna'))
+
+kable(table(df$df.IregLabelled), caption = 'Absolute Frequencies of Italian regions in the Dataset', col.names = c('Italian regions','Frequency'), 'pipe')
+
+#I cerate a variable, which is a copy of the previous Variable, but labelled. So I can create a nice table with labels instead of numbers. This Variables is gonna be used only for viz purposes.
+
+```
+
+### Net Disposable Income Per Capita
+
+Net Disposable Income is the total income available after that all the transfers (taxes, deductions, etc) have been taken into account. It is the total amount of money that a person can effectively spend.
+
+First we are going to check whether there are any missing values.
+
+```{r,echo=FALSE}
+
+#I ask for any NA.
+
+```
+
+```{r}
+anyNA(df$df.y)
+
+```
+
+Everything looks fine from that point of view.
+
+Then we are going to have a further look to the data.
+
+```{r,echo=FALSE}
+
+#This command gives me a nice descriptions of the most frequent measures of position and measures of variation of Income, which is a quantitative variable.
+
+```
+
+```{r}
+
+describe(df$df.y)
+
+```
+
+As we can see from the 'describe' function, there are some negative values. Given that it is impossible to have a negative Net Disposable Income, we have to further investigate to clear the problem.
+
+```{r,echo=FALSE}
+
+#I ask for a table to compare values under 0 and values over 0.
+
+```
+
+```{r}
+table(df$df.y<0)
+
+```
+
+There are 14 Values lower than 0 (The TRUE ones), out of 11888. We chose to recode the negative observations into positive.
+
+```{r,echo=FALSE}
+
+# I modify the variable Y: IF the value is under than 0, apply a *-1 to that value, IN ANY OTHER CASE, do not.
+
+```
+
+```{r}
+df$df.y <- ifelse(df$df.y<=0, df$df.y*-1, df$df.y)
+
+table(df$df.y<0)
+
+```
+
+Now that we are done with the resetting of the negative values, we can give a proper look to the data.
+
+------------------------------------------------------------------------
+
+```{r, echo=FALSE}
+
+df$Income <- df$df.y
+
+kable(st(df, vars = 'Income', factor.numeric = TRUE, summ =  c('mean(x)', 'sd(x)', 'min(x)', 'pctile(x)[25]', 'median(x)', 'pctile(x)[75]', 'max(x)'), out = 'return'),'pipe')
+
+#I recreate df.y but with a different name, for VIz Purposes.
+
+# I kable the command st, which stands for SUMMARY TABLE. This command creates a table which all the statistical measures that you want!
+
+#Clara if you want to add other statistics at this table give a look here: https://cran.r-project.org/web/packages/vtable/vignettes/sumtable.html
+
+```
+
+BLA BLA BLA. I think we can conclude this part with some observations on this table, and then go further.
+
+------------------------------------------------------------------------
+
+## Block 1 - STUDIO VS AREA3
+
+## Block 1 - STUDIO VS AREA3
+
+Our first analysis is going to compare Educational attainment for the different Geographical Areas
+
+```{r,echo=FALSE}
+# I have to change the order of this variable so that noth is on top (only for horizontal)
+df$df.area3HLabelled = ordered(df$df.area3,
+                        levels=c(3,2,1),
+                        labels=c('South and Island','Centre', 'North'))
+
+
+df$ordgraduate = ordered(df$graduate,
+                        levels=c('Not Graduated','At least Graduated'))
+```
+
+```{r fig.asp = 0.5, fig.width = 5.5}
+g <- ggplot(df, aes(df.area3HLabelled))
+g + geom_bar(aes(fill=df.studioLabelled), width = 0.7) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas unadjusted", x= "Geographical Area", y= "count", fill="Educational Attainment") + coord_flip()
+```
+
+The following graph shows educational attainment not adjusted for population, let's adjust it
+
+```{r}
+df$df.farea3HLabelled <- as.factor(df$df.area3HLabelled)
+df$df.fstudioLabelled <- as.factor(df$df.studioLabelled)
+```
+
+------------------------------------------------------------------------
+
+```{r fig.asp = 0.5, fig.width = 5.5}
+
+ percentData <- df  %>% group_by(df.farea3HLabelled) %>% count(df.fstudioLabelled) %>%
+    mutate(ratio=scales::percent(n/sum(n),accuracy = 1))
+
+g <- ggplot(df, aes(x=df.farea3HLabelled, fill= df.fstudioLabelled))
+g + geom_bar(position="fill", width = 0.7) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + geom_text(data=percentData, aes(y=n,label=ratio), position=position_fill(vjust=0.5),colour="white") + coord_flip()
+
+
+
+```
+
+```{r fig.asp = 0.5, fig.width = 5.5}
+
+
+percentData <- df  %>% group_by(df.farea3HLabelled) %>% count(ordgraduate) %>%
+    mutate(ratio=scales::percent(n/sum(n),accuracy = 1))
+
+g <- ggplot(df, aes(x=df.farea3HLabelled, fill= ordgraduate))
+g + geom_bar(position="fill", width = 0.7) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + geom_text(data=percentData, aes(y=n,label=ratio), position=position_fill(vjust=0.5),colour="white") + coord_flip()
+
+
+```
+
+
+
+
+```{r fig.asp = 0.5, fig.width = 5.5}
+
+percentData <- df  %>% group_by(df.IregLabelled) %>% count(df.fstudioLabelled) %>%
+    mutate(ratio=scales::percent(n/sum(n),accuracy = 1))
+
+g <- ggplot(df, aes(x=df.IregLabelled, fill= df.fstudioLabelled))
+g + geom_bar(position="fill", width = 0.7) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + geom_text(data=percentData, aes(y=n,label=ratio), position=position_fill(vjust=0.5),colour="white") + coord_flip()
+```
+
+
+
+
+------------------------------------------------------------------------
+
+## Block 2 - INCOME VS STUDIO VS IREG VS AREA3
+
+we are going to look now only at the people that graduated
+
+```{r}
+dfg <- subset(df, graduate == 'At least Graduated')
+```
+
+
+Let's calculate the median income of Graduates in Italy
+
+```{r}
+median(dfg$Income)
+```
+
+```{r}
+
+
+#Calculate mean income by region
+reg_income <- dfg %>% group_by(df.IregLabelled) %>% summarise(across(Income, median, na.rm = TRUE))
+colnames(reg_income) <- c("Region", "Income")  # change column names
+reg_income <- reg_income[order(reg_income$Income), ]  # sort
+reg_income$Region <- factor(reg_income$Region, levels = reg_income$Region)  # to retain the order in plot.
+reg_income
+
+```
+
+```{r}
+# Plot lollipop chart
+ggplot(reg_income, aes(x=Region, y=Income)) + 
+  geom_point(size=3) + 
+  geom_segment(aes(x=Region, 
+                   xend=Region, 
+                   y=0, 
+                   yend=Income)) + 
+  labs(title="Lollipop Chart", 
+       subtitle="Region Vs median income of Graduates", 
+       caption="source: mpg") + 
+  theme(axis.text.x = element_text(angle=65, vjust=0.6))
+```
+
+
+```{r}
+g <- ggplot( dfg,aes(df.IregLabelled, Income))
+g + geom_boxplot() + coord_flip() + labs(title="Distribution of Income in Italy of Graduates",subtitle="Income distribution in the different Italian regions of graduates. \nOverall median income of graduates in Italy in red", x= "Geographical Area", y= "Income") + geom_hline(yintercept=24374.96, color = "red")
+
+```
+
+------------------------------------------------------------------------
+
+## Block 3 - GEOGRAFPHICAL PERSPECTIVE
+
+```{r}
+#install.packages("rgdal")
+#install.packages("maptools")
+#install.packages("pacman")
+#always need to add sudtirol    ehheheheheeheheh
+
+library(rgdal)
+library(maptools)
+library(dplyr)
+library(pacman)
+pacman::p_load(RColorBrewer,classInt,rgdal,maptools,precrec,ggplot2,gpclib,rgeos,mapproj)
+
+
+shp <- readOGR("geofiles","NUTS_RG_20M_2021_3035")
+shp <- subset(shp,CNTR_CODE == "IT")
+shp <- subset(shp, LEVL_CODE ==2)
+
+reg_income$NUTS_ID <- c("ITI2","ITF6","ITH1", "ITF2", "ITH3", "ITF4", "ITF3", "ITF1", "ITG1", "ITI3", "ITH4", "ITF5", "ITH5", "ITC2", "ITC3", "ITI1", "ITC1", "ITG2", "ITI4", "ITC4")
+a <- c("Alto adige", 20089.87,"ITH2")
+reg_income$Region <- as.character(reg_income$Region)
+names(a) <- c("Region","Income","NUTS_ID")
+reg_income <- rbind(reg_income,a)
+
+
+nuts_name <- reg_income %>% select(Region,NUTS_ID)
+names(nuts_name) <- c("df.IregLabelled","NUTS_ID")
+
+df <- left_join(df,nuts_name, by="df.IregLabelled")
+
+
+
+
+```
+
+
+
+```{r}
+reg_income2 <- merge(shp,reg_income, by ="NUTS_ID")
+r_inc_f<-fortify(reg_income2, region='NUTS_ID')
+r_inc_f <- merge(r_inc_f,reg_income@data,by.x='id',by.y="NUTS_ID")
+
+
+ggplot(r_inc_f,aes(x=long,y=lat,group=group))+
+  geom_polygon(aes(fill= Income))+
+  geom_path(colour='white',size=1e-3)
+
+
+```
