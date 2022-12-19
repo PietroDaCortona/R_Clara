@@ -25,7 +25,7 @@ options(scipen = 9)
 #install.packages("kableExtra")
 #install.packages('vtable')
 #install.packages("ggplot2")
-install.packages('rgdal')
+
 
 library(haven)
 library(dplyr)
@@ -37,7 +37,7 @@ library(Hmisc)
 library(kableExtra)
 library(vtable)
 library(ggplot2)
-library(rgdal)
+
 
 
 rper <- read_dta("rper16.dta")
