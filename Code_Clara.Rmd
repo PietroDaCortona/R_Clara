@@ -24,7 +24,7 @@ options(scipen = 9)
 #install.packages('knitr')
 #install.packages("kableExtra")
 #install.packages('vtable')
-
+#install.packages("ggplot2")
 
 
 library(haven)
@@ -36,6 +36,8 @@ library(knitr)
 library(Hmisc)
 library(kableExtra)
 library(vtable)
+library(ggplot2)
+
 
 rper <- read_dta("rper16.dta")
 carcom <- read_dta('carcom16.dta')
@@ -321,4 +323,12 @@ g + geom_boxplot() + coord_flip() + labs(title="Distribution of Income in Italy 
 
 ------------------------------------------------------------------------
 
-## Block 3 - GEOGRAFPHICAL...
+## Block 3 - GEOGRAFPHICAL PERSPECTIVE
+
+```{r}
+
+
+
+```
+
+
