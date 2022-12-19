@@ -25,7 +25,7 @@ options(scipen = 9)
 #install.packages("kableExtra")
 #install.packages('vtable')
 #install.packages("ggplot2")
-
+install.packages('rgdal')
 
 library(haven)
 library(dplyr)
@@ -37,6 +37,7 @@ library(Hmisc)
 library(kableExtra)
 library(vtable)
 library(ggplot2)
+library(rgdal)
 
 
 rper <- read_dta("rper16.dta")
@@ -72,6 +73,7 @@ kable(head(df), 'pipe')
 #I give a check to the DF that we will use.
 
 ```
+
 
 ### Education
 
@@ -177,7 +179,9 @@ Then we are going to have a further look to the data.
 ```
 
 ```{r}
+
 describe(df$df.y)
+
 ```
 
 As we can see from the 'describe' function, there are some negative values. Given that it is impossible to have a negative Net Disposable Income, we have to further investigate to clear the problem.
