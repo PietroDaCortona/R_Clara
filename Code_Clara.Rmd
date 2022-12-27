@@ -29,7 +29,7 @@ options(scipen = 9)
 library(sp)
 
 
-install.packages('giscoR')
+#install.packages('giscoR')
 
 library(haven)
 library(dplyr)
@@ -107,7 +107,7 @@ This table shows the distribution of Educational Qualification among the populat
 
 ```{r,echo=FALSE}
 
-df$graduate <- ifelse(df$df.studio>=6,1,2)
+df$graduate <- ifelse(df$df.studio >=6,1,2)
 
 df$graduate <- ordered(df$graduate,
                         levels=c(1,2),
@@ -288,10 +288,10 @@ g + geom_bar(position="fill", width = 0.7) + labs(title="Histogram on Education 
 ```{r fig.asp = 0.5, fig.width = 5.5}
 
 
-percentData <- df  %>% group_by(df.farea3HLabelled) %>% count(ordgraduate) %>%
+percentData <- df  %>% group_by(df.farea3HLabelled) %>% count(ord) %>%
     mutate(ratio=scales::percent(n/sum(n),accuracy = 1))
 
-g <- ggplot(df, aes(x=df.farea3HLabelled, fill= ordgraduate))
+g <- ggplot(df, aes(x=df.farea3HLabelled, fill= graduate))
 g + geom_bar(position="fill", width = 0.7) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + geom_text(data=percentData, aes(y=n,label=ratio), position=position_fill(vjust=0.5),colour="white") + coord_flip()
 
 
@@ -368,8 +368,8 @@ g + geom_boxplot() + coord_flip() + labs(title="Distribution of Income in Italy 
 
 ```{r}
 
-install.packages("giscoR")
-install.packages("sf")
+#install.packages("giscoR")
+#install.packages("sf")
 library(giscoR)
 library(sf)
 year_ref <- 2013
@@ -420,11 +420,11 @@ reg_income$NUTS_ID <- c("ITI2","ITF6","ITH1", "ITF2", "ITH3", "ITF4", "ITF3", "I
 a <- c("Alto adige", 20089.87,"ITH2")
 reg_income$Region <- as.character(reg_income$Region)
 names(a) <- c("Region","Income","NUTS_ID")
-reg_income <- rbind(reg_income,a)
-reg_income$Income<-as.integer(reg_income$Income)
+reg_income2 <- rbind(reg_income,a)
+reg_income2$Income<-as.integer(reg_income2$Income)
 
 
-nuts_name <- reg_income %>% select(Region,NUTS_ID)
+nuts_name <- reg_income2 %>% select(Region,NUTS_ID)
 names(nuts_name) <- c("df.IregLabelled","NUTS_ID")
 
 df <- left_join(df,nuts_name, by="df.IregLabelled")
@@ -439,18 +439,60 @@ df <- left_join(df,nuts_name, by="df.IregLabelled")
 
 ```{r fig.asp = 0.5, fig.width = 5.5}
 #install.packages("wesanderson")
-library("wesanderson")
 
-pal <- wes_palette("Zissou1", 21, type = "continuous")
-
-reg_income2 <- merge(shp,reg_income, by ="NUTS_ID")
-r_inc_f<-fortify(reg_income2, region='NUTS_ID')
-r_inc_f <- merge(r_inc_f,reg_income2@data,by.x='id',by.y="NUTS_ID")
+reg_income3 <- merge(shp,reg_income2, by ="NUTS_ID")
+r_inc_f<-fortify(reg_income3, region='NUTS_ID')
+r_inc_f <- merge(r_inc_f,reg_income3@data,by.x='id',by.y="NUTS_ID")
 
 ggplot(r_inc_f,aes(x=long,y=lat,group=group))+
   geom_polygon(aes(fill= Income))+
-  geom_path(colour='white',size=1e-3) +scale_fill_gradientn(colours = pal) + coord_fixed() + labs(title="Median income in Italy of Graduates",subtitle="Income distribution in the different Italian regions of graduates", x= "Longitude", y= "Latitude")
+  geom_path(colour='white',size=1e-3) +scale_fill_gradient(low = 'yellow', high = 'darkorange') + coord_fixed() + labs(title="Median income in Italy of Graduates",subtitle="Income distribution in the different Italian regions of graduates", x= "Longitude", y= "Latitude")
 
 
 ```
 
+
+```{r}
+#reg_graduate  
+#myStmyStats <myStats <up_by(df.IregL  %>% group_by(df.IregLabelled) %>% count(graduate) %>%
+#    mutate(ratio=scales::percent(n/sum(n),accuracy = 1))%>% mutate(graduate= graduate))
+
+
+reg_graduate <- df  %>% group_by(df.IregLabelled) %>% count(ordgraduate) %>%
+    mutate(ratio=(n/sum(n)*100))
+
+
+
+reg_graduate <- subset(reg_graduate, ordgraduate == "At least Graduated")
+reg_graduate$n <- as.character(reg_graduate$n)
+reg_graduate$ratio <- as.character(reg_graduate$ratio)
+
+reg_graduate$NUTS_ID <- c("ITF1","ITF5", "ITF6", "ITF3", "ITH5", "ITH4", "ITI4", "ITC3", "ITC4", "ITI3", "ITF2", "ITC1", "ITF4", "ITG2", "ITG1", "ITI1", "ITH1", "ITI2", "ITC2", "ITH3")
+a <- c("Alto adige","At least Graduated", 7.00, "14" ,"ITH2")
+
+names(a) <- c("df.IregLabelled","ordgraduate", "n","ratio","NUTS_ID")
+
+reg_graduate <- rbind(reg_graduate,a)
+
+reg_graduate$df.IregLabelled <- as.character(reg_graduate$df.IregLabelled)
+
+reg_graduate$ratio <- as.integer(reg_graduate$ratio)
+
+```
+
+```{r fig.asp = 0.5, fig.width = 5.5}
+#install.packages("wesanderson")
+library(RColorBrewer)
+
+pal <- wes_palette("Zissou1", 21, type = "continuous")
+
+reg_graduate2 <- merge(shp,reg_graduate, by ="NUTS_ID")
+r_inc_f<-fortify(reg_graduate2, region='NUTS_ID')
+r_inc_f <- merge(r_inc_f,reg_graduate2@data,by.x='id',by.y="NUTS_ID")
+
+ggplot(r_inc_f,aes(x=long,y=lat,group=group))+
+  geom_polygon(aes(fill= ratio))+
+  geom_path(colour='white',size=1e-3) +scale_fill_gradient(low = 'yellow', high = 'darkorange') + coord_fixed() + labs(title="Percentage of Graduates in Italy",subtitle="Distribution of graduates in the different Italian regions", x= "Longitude", y= "Latitude", fill= "Percentage ")
+
+
+```
