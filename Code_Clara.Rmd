@@ -82,7 +82,6 @@ kable(head(df), 'pipe')
 
 ```
 
-
 ### Education
 
 The first thing that we need for our analysis is Educational Attainment of the Population.
@@ -242,9 +241,9 @@ BLA BLA BLA. I think we can conclude this part with some observations on this ta
 
 ------------------------------------------------------------------------
 
-## Block 1 - STUDIO VS AREA3
 
 ## Block 1 - STUDIO VS AREA3
+
 
 Our first analysis is going to compare Educational attainment for the different Geographical Areas
 
@@ -259,9 +258,11 @@ df$ordgraduate = ordered(df$graduate,
                         levels=c('Not Graduated','At least Graduated'))
 ```
 
-```{r fig.asp = 0.5, fig.width = 5.5}
+```{r fig.asp = 0.3, fig.width = 8}
 g <- ggplot(df, aes(df.area3HLabelled))
 g + geom_bar(aes(fill=df.studioLabelled), width = 0.7) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas unadjusted", x= "Geographical Area", y= "count", fill="Educational Attainment") + coord_flip()
+
+
 ```
 
 The following graph shows educational attainment not adjusted for population, let's adjust it
@@ -273,13 +274,13 @@ df$df.fstudioLabelled <- as.factor(df$df.studioLabelled)
 
 ------------------------------------------------------------------------
 
-```{r fig.asp = 0.5, fig.width = 5.5}
+```{r fig.asp = 0.5, fig.width =10}
 
  percentData <- df  %>% group_by(df.farea3HLabelled) %>% count(df.fstudioLabelled) %>%
     mutate(ratio=scales::percent(n/sum(n),accuracy = 1))
 
 g <- ggplot(df, aes(x=df.farea3HLabelled, fill= df.fstudioLabelled))
-g + geom_bar(position="fill", width = 0.7) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + geom_text(data=percentData, aes(y=n,label=ratio), position=position_fill(vjust=0.5),colour="white") + coord_flip()
+g + geom_bar(position="fill", width = 0.5) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + geom_text(data=percentData, aes(y=n,label=ratio), position=position_fill(vjust=0.5),colour="white") + coord_flip()
 
 
 
@@ -288,29 +289,23 @@ g + geom_bar(position="fill", width = 0.7) + labs(title="Histogram on Education 
 ```{r fig.asp = 0.5, fig.width = 5.5}
 
 
-percentData <- df  %>% group_by(df.farea3HLabelled) %>% count(ord) %>%
+percentData <- df %>% group_by(df.farea3HLabelled) %>% count(ordgraduate) %>%
     mutate(ratio=scales::percent(n/sum(n),accuracy = 1))
 
-g <- ggplot(df, aes(x=df.farea3HLabelled, fill= graduate))
+g <- ggplot(df, aes(x=df.farea3HLabelled, fill= ordgraduate))
 g + geom_bar(position="fill", width = 0.7) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + geom_text(data=percentData, aes(y=n,label=ratio), position=position_fill(vjust=0.5),colour="white") + coord_flip()
 
 
 ```
 
-
-
-
-```{r fig.asp = 0.5, fig.width = 5.5}
+```{r fig.asp = 0.5, fig.width = 10}
 
 percentData <- df  %>% group_by(df.IregLabelled) %>% count(df.fstudioLabelled) %>%
     mutate(ratio=scales::percent(n/sum(n),accuracy = 1))
 
 g <- ggplot(df, aes(x=df.IregLabelled, fill= df.fstudioLabelled))
-g + geom_bar(position="fill", width = 0.7) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + geom_text(data=percentData, aes(y=n,label=ratio), position=position_fill(vjust=0.5),colour="white") + coord_flip()
+g + geom_bar(position="fill", width = 0.9) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + geom_text(data=percentData, aes(y=n,label=ratio), position=position_fill(vjust=0.5),colour="white") + coord_flip()
 ```
-
-
-
 
 ------------------------------------------------------------------------
 
@@ -321,7 +316,6 @@ we are going to look now only at the people that graduated
 ```{r}
 dfg <- subset(df, graduate == 'At least Graduated')
 ```
-
 
 Let's calculate the median income of Graduates in Italy
 
@@ -337,7 +331,7 @@ reg_income <- dfg %>% group_by(df.IregLabelled) %>% summarise(across(Income, med
 colnames(reg_income) <- c("Region", "Income")  # change column names
 reg_income <- reg_income[order(reg_income$Income), ]  # sort
 reg_income$Region <- factor(reg_income$Region, levels = reg_income$Region)  # to retain the order in plot.
-reg_income
+kable(reg_income)
 
 ```
 
@@ -355,7 +349,6 @@ ggplot(reg_income, aes(x=Region, y=Income)) +
   theme(axis.text.x = element_text(angle=65, vjust=0.6))
 ```
 
-
 ```{r}
 g <- ggplot( dfg,aes(df.IregLabelled, Income))
 g + geom_boxplot() + coord_flip() + labs(title="Distribution of Income in Italy of Graduates",subtitle="Income distribution in the different Italian regions of graduates. \nOverall median income of graduates in Italy in red", x= "Geographical Area", y= "Income") + geom_hline(yintercept=24374.96, color = "red")
@@ -365,38 +358,6 @@ g + geom_boxplot() + coord_flip() + labs(title="Distribution of Income in Italy 
 ------------------------------------------------------------------------
 
 ## Block 3 - GEOGRAFPHICAL PERSPECTIVE
-
-```{r}
-
-#install.packages("giscoR")
-#install.packages("sf")
-library(giscoR)
-library(sf)
-year_ref <- 2013
-
-nuts2_IT <- gisco_get_nuts(
-  year = year_ref,
-  resolution = 20, 
-  nuts_level = 2,
-  country = "Italy") %>%
-  select(NUTS_ID, NAME_LATN)
-
-plot(st_geometry(nuts2_IT))
-
-tm_shape(nuts2_IT) +
-  tm_polygons()
-
-reg_income
-
-
-
-#Now I have to put the values of reg_income inside nuts2_IT, then compute. Ia am following this guide : https://geocompr.robinlovelace.net/adv-map.html
-
-```
-
-
-
-
 
 ```{r}
 #install.packages("rgdal")
@@ -410,6 +371,10 @@ library(dplyr)
 library(pacman)
 pacman::p_load(RColorBrewer,classInt,rgdal,maptools,precrec,ggplot2,gpclib,rgeos,mapproj)
 
+if (!require(gpclib)) install.packages("gpclib", type="source")
+gpclibPermit()
+
+library(gpclib)
 
 shp <- readOGR("geofiles","NUTS_RG_20M_2021_3035")
 shp <- subset(shp,CNTR_CODE == "IT")
@@ -432,11 +397,6 @@ df <- left_join(df,nuts_name, by="df.IregLabelled")
 
 ```
 
-
-
-
-
-
 ```{r fig.asp = 0.5, fig.width = 5.5}
 #install.packages("wesanderson")
 
@@ -450,7 +410,6 @@ ggplot(r_inc_f,aes(x=long,y=lat,group=group))+
 
 
 ```
-
 
 ```{r}
 #reg_graduate  
@@ -482,6 +441,7 @@ reg_graduate$ratio <- as.integer(reg_graduate$ratio)
 
 ```{r fig.asp = 0.5, fig.width = 5.5}
 #install.packages("wesanderson")
+library(wesanderson)
 library(RColorBrewer)
 
 pal <- wes_palette("Zissou1", 21, type = "continuous")
