@@ -1,7 +1,7 @@
 ---
-title: "Code_Clara"
-author: "Tommaso Aicardi"
-date: "2022-12-08"
+title: "Final Project of Workshop 2 with Elena Morotti"
+author: "Clara Schloesser, Tommaso Aicardi"
+date: "2023-01-04"
 output: html_document
 ---
 
@@ -78,27 +78,29 @@ df <- data.frame(df$studio,df$y,df$area3,df$ireg)
 #DF is the final dataframe containing only: Educational Attainment (STUDIO), Income per Capita(Y), Geog area(AREA3), Region(IREG).
 ```
 
-# TITLE
 
 ## Inroduction
 
-We are gonna do bla bla bla... Shiw 16, Bla bla bla...
+During the course we explored various ways in which the data can be presented. The aim of this work is to exercise some of the different forms of data visualization. For this purpose, we analysed the distribution of Income and Education in Italy, in particular, at regional level.
 
 ## Exploratory Data Analysis
 
-Here we want first to understand how our variables work, and how we can manipulate them to make them useful to our project. First we give a look at the DataFrame.
+As always, the first phase of a Data Analysis is meant to explore the used Data set. Here we want first to understand how our variables work, and how we can manipulate them to make them useful to our project. First we give a look at the Data Frame.
 
 ```{r echo=TRUE}
 
 kable(head(df), 'pipe')
 
-#I give a check to the DF that we will use.
+nrow(df)
 
 ```
 
+
+The Dataset used is the [Survey of Household of Income and Wealth (SHIW)](https://www.bancaditalia.it/statistiche/tematiche/indagini-famiglie-imprese/bilanci-famiglie/index.html?com.dotmarketing.htmlpage.language=1), in its 2016 version. Each row corresponds to an Italian citizen selected through random techniques. The overall number of observations is 11888. Each column correpsonds to a variable. The selected variables are the following: Educational Attainment (df.STUDIO), Income per Capita(df.Y), Geographicl area(df.AREA3), Region(df.IREG). In the following sections we will better understand the meaning of each variable and its states. 
+
 ### Education
 
-The first thing that we need for our analysis is Educational Attainment of the Population.
+The first thing that we need for our analysis is Educational Attainment of the Population. It is defined by the last Educational Level accomplished by the individual.
 
 ```{r echo=FALSE}
 
@@ -110,13 +112,32 @@ kable(table(df$df.studioLabelled), caption = 'Absolute Frequencies of Educationa
 
 #I cerate a variable, which is a copy of the previous Variable, but labelled. So I can create a nice table with labels instead of numbers. This Variables is gonna be used only for viz purposes.
 
+
 ```
 
-------------------------------------------------------------------------
 
-This table shows the distribution of Educational Qualification among the population. For the purpose of the analysis, we will aggregate the observation between people at least graduate, and people at best with a diploma. We will put everything equal or higher than '3Y Degree' it into the same category, and everything lower, into another cateogory.
 
-------------------------------------------------------------------------
+
+
+
+```{r echo=FALSE}
+
+
+
+kable ((table(df$df.studioLabelled)/length(df$df.studioLabelled)*100), caption = 'Relative Frequencies of Educational Attainment in the Dataset', col.names = c('Educational Attainment','Frequency'), 'pipe')
+
+#I cerate a variable, which is a copy of the previous Variable, but labelled. So I can create a nice table with labels instead of numbers. This Variables is gonna be used only for viz purposes.
+
+
+
+```
+
+
+The first table shows the absolute distribution of Educational Qualification among the population. The modal state is 'Lower Secondary', almost tied with 'Upper Secondary Diploma'. Still, it is difficult to quantify the distances between the different states. The table with relative distributions gives a better quantification of the Level of Education of the population.
+
+
+For the purpose of the analysis, we will aggregate the observation between people at least graduate, and people at best with a diploma. We will put everything equal or higher than '3Y Degree' it into the same category, and everything lower, into another cateogory.
+
 
 ```{r,echo=FALSE}
 
@@ -128,19 +149,27 @@ df$graduate <- ordered(df$graduate,
 
 kable(table(df$graduate), caption = 'Graduated VS Not Graduated in Absolute Terms in the Dataset', col.names = c('Variable','Frequency'), 'pipe')
 
+kable((table(df$graduate)/length(df$graduate)*100), caption = 'Graduated VS Not Graduated in Relative Terms in the Dataset', col.names = c('Variable','Frequency'), 'pipe')
+
+
+
+
 #I create a Varibale in Which I say : If your ED level is higher or equal than 6, which is '3Y graduate', you get assigned to the first group, IN ANY OTHER CASE, you get assigned to the second group.
 
 ```
 
-------------------------------------------------------------------------
 
-This second table instead divides the population between (at least) Graduated and not Graduated.
 
-------------------------------------------------------------------------
+This second group of tables instead divides the population between (at least) Graduated and not Graduated. As we can se, only 12.5% of the population achieved at least a 3-years Uiversity Degree.
+
+
+
+
+
 
 ### Geographical Area
 
-The second variable we will use for our analysis is the geographic area from which the surveyed population comes from. More specifically, the variable divides Italy in three parts: North, Centre and South plus Islands.
+The second variable we will use for our analysis is the geographic area from which the surveyed population comes from. More specifically, the variable divides the population in three parts: North, Centre and South plus Islands. 
 
 ```{r echo=FALSE}
 
@@ -150,11 +179,17 @@ df$df.area3Labelled <- ordered(df$df.area3,
 
 kable(table(df$df.area3Labelled), caption = 'Absolute Frequencies of Geographical Area in the Dataset', col.names = c('Geografical Area','Frequency'), 'pipe')
 
+
+kable ((table(df$df.area3Labelled)/length(df$df.studioLabelled)*100), caption = 'Relative Frequencies of Geographical Area in the Dataset', col.names = c('Geografical Area','Frequency'), 'pipe')
+
+
 #I cerate a variable, which is a copy of the previous Variable, but labelled. So I can create a nice table with labels instead of numbers. This Variables is gonna be used only for viz purposes.
 
 ```
 
-------------------------------------------------------------------------
+
+
+
 
 ### Italian Regions
 
