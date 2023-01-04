@@ -46,6 +46,20 @@ library(giscoR)
 
 library(sf)
 
+library(wesanderson)
+library(RColorBrewer)
+
+library(rgdal)
+library(maptools)
+library(dplyr)
+library(pacman)
+pacman::p_load(RColorBrewer,classInt,rgdal,maptools,precrec,ggplot2,gpclib,rgeos,mapproj)
+
+if (!require(gpclib)) install.packages("gpclib", type="source")
+gpclibPermit()
+
+library(gpclib)
+
 #library(tmap)
 
 rper <- read_dta("rper16.dta")
@@ -258,7 +272,7 @@ df$ordgraduate = ordered(df$graduate,
                         levels=c('Not Graduated','At least Graduated'))
 ```
 
-```{r fig.asp = 0.3, fig.width = 8}
+```{r fig.asp = 0.3, fig.width = 8, echo=FALSE}
 g <- ggplot(df, aes(df.area3HLabelled))
 g + geom_bar(aes(fill=df.studioLabelled), width = 0.7) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas unadjusted", x= "Geographical Area", y= "count", fill="Educational Attainment") + coord_flip()
 
@@ -267,14 +281,14 @@ g + geom_bar(aes(fill=df.studioLabelled), width = 0.7) + labs(title="Histogram o
 
 The following graph shows educational attainment not adjusted for population, let's adjust it
 
-```{r}
+```{r, echo=FALSE}
 df$df.farea3HLabelled <- as.factor(df$df.area3HLabelled)
 df$df.fstudioLabelled <- as.factor(df$df.studioLabelled)
 ```
 
 ------------------------------------------------------------------------
 
-```{r fig.asp = 0.5, fig.width =10}
+```{r fig.asp = 0.5, fig.width =10, echo=FALSE}
 
  percentData <- df  %>% group_by(df.farea3HLabelled) %>% count(df.fstudioLabelled) %>%
     mutate(ratio=scales::percent(n/sum(n),accuracy = 1))
@@ -286,7 +300,7 @@ g + geom_bar(position="fill", width = 0.5) + labs(title="Histogram on Education 
 
 ```
 
-```{r fig.asp = 0.5, fig.width = 5.5}
+```{r fig.asp = 0.5, fig.width = 5.5, echo=FALSE}
 
 
 percentData <- df %>% group_by(df.farea3HLabelled) %>% count(ordgraduate) %>%
@@ -298,7 +312,7 @@ g + geom_bar(position="fill", width = 0.7) + labs(title="Histogram on Education 
 
 ```
 
-```{r fig.asp = 0.5, fig.width = 10}
+```{r fig.asp = 0.5, fig.width = 10, echo=FALSE}
 
 percentData <- df  %>% group_by(df.IregLabelled) %>% count(df.fstudioLabelled) %>%
     mutate(ratio=scales::percent(n/sum(n),accuracy = 1))
@@ -313,7 +327,7 @@ g + geom_bar(position="fill", width = 0.9) + labs(title="Histogram on Education 
 
 we are going to look now only at the people that graduated
 
-```{r}
+```{r, echo=FALSE}
 dfg <- subset(df, graduate == 'At least Graduated')
 ```
 
@@ -323,33 +337,33 @@ Let's calculate the median income of Graduates in Italy
 median(dfg$Income)
 ```
 
-```{r}
+```{r, echo=FALSE}
 
 
 #Calculate mean income by region
 reg_income <- dfg %>% group_by(df.IregLabelled) %>% summarise(across(Income, median, na.rm = TRUE))
-colnames(reg_income) <- c("Region", "Income")  # change column names
-reg_income <- reg_income[order(reg_income$Income), ]  # sort
+colnames(reg_income) <- c("Region", "Median_Income")  # change column names
+reg_income <- reg_income[order(reg_income$Median_Income), ]  # sort
 reg_income$Region <- factor(reg_income$Region, levels = reg_income$Region)  # to retain the order in plot.
 kable(reg_income)
 
 ```
 
-```{r}
+```{r, echo=FALSE}
 # Plot lollipop chart
-ggplot(reg_income, aes(x=Region, y=Income)) + 
+ggplot(reg_income, aes(x=Region, y=Median_Income)) + 
   geom_point(size=3) + 
   geom_segment(aes(x=Region, 
                    xend=Region, 
                    y=0, 
-                   yend=Income)) + 
+                   yend=Median_Income)) + 
   labs(title="Lollipop Chart", 
        subtitle="Region Vs median income of Graduates", 
        caption="source: mpg") + 
   theme(axis.text.x = element_text(angle=65, vjust=0.6))
 ```
 
-```{r}
+```{r, echo=FALSE}
 g <- ggplot( dfg,aes(df.IregLabelled, Income))
 g + geom_boxplot() + coord_flip() + labs(title="Distribution of Income in Italy of Graduates",subtitle="Income distribution in the different Italian regions of graduates. \nOverall median income of graduates in Italy in red", x= "Geographical Area", y= "Income") + geom_hline(yintercept=24374.96, color = "red")
 
@@ -359,22 +373,13 @@ g + geom_boxplot() + coord_flip() + labs(title="Distribution of Income in Italy 
 
 ## Block 3 - GEOGRAFPHICAL PERSPECTIVE
 
-```{r}
+```{r, include=FALSE, echo=FALSE, message=FALSE, results='hide'}
 #install.packages("rgdal")
 #install.packages("maptools")
 #install.packages("pacman")
 #always need to add sudtirol    ehheheheheeheheh
 
-library(rgdal)
-library(maptools)
-library(dplyr)
-library(pacman)
-pacman::p_load(RColorBrewer,classInt,rgdal,maptools,precrec,ggplot2,gpclib,rgeos,mapproj)
 
-if (!require(gpclib)) install.packages("gpclib", type="source")
-gpclibPermit()
-
-library(gpclib)
 
 shp <- readOGR("geofiles","NUTS_RG_20M_2021_3035")
 shp <- subset(shp,CNTR_CODE == "IT")
@@ -386,7 +391,7 @@ a <- c("Alto adige", 20089.87,"ITH2")
 reg_income$Region <- as.character(reg_income$Region)
 names(a) <- c("Region","Income","NUTS_ID")
 reg_income2 <- rbind(reg_income,a)
-reg_income2$Income<-as.integer(reg_income2$Income)
+reg_income2$Income<-as.integer(reg_income2$Median_Income)
 
 
 nuts_name <- reg_income2 %>% select(Region,NUTS_ID)
@@ -397,7 +402,7 @@ df <- left_join(df,nuts_name, by="df.IregLabelled")
 
 ```
 
-```{r fig.asp = 0.5, fig.width = 5.5}
+```{r fig.asp = 0.5, fig.width = 10, echo=FALSE, message=FALSE}
 #install.packages("wesanderson")
 
 reg_income3 <- merge(shp,reg_income2, by ="NUTS_ID")
@@ -406,12 +411,12 @@ r_inc_f <- merge(r_inc_f,reg_income3@data,by.x='id',by.y="NUTS_ID")
 
 ggplot(r_inc_f,aes(x=long,y=lat,group=group))+
   geom_polygon(aes(fill= Income))+
-  geom_path(colour='white',size=1e-3) +scale_fill_gradient(low = 'yellow', high = 'darkorange') + coord_fixed() + labs(title="Median income in Italy of Graduates",subtitle="Income distribution in the different Italian regions of graduates", x= "Longitude", y= "Latitude")
+  geom_path(colour='white',linewidth=1e-3) +scale_fill_gradient(low = 'yellow', high = 'darkorange') + coord_fixed() + labs(title="Median income in Italy of Graduates",subtitle="Income distribution in the different Italian regions of graduates", x= "Longitude", y= "Latitude")
 
 
 ```
 
-```{r}
+```{r, echo=FALSE, message=FALSE, results='hide'}
 #reg_graduate  
 #myStmyStats <myStats <up_by(df.IregL  %>% group_by(df.IregLabelled) %>% count(graduate) %>%
 #    mutate(ratio=scales::percent(n/sum(n),accuracy = 1))%>% mutate(graduate= graduate))
@@ -439,10 +444,10 @@ reg_graduate$ratio <- as.integer(reg_graduate$ratio)
 
 ```
 
-```{r fig.asp = 0.5, fig.width = 5.5}
+```{r fig.asp = 0.5, fig.width = 10, echo=FALSE, message=FALSE}
+
 #install.packages("wesanderson")
-library(wesanderson)
-library(RColorBrewer)
+
 
 pal <- wes_palette("Zissou1", 21, type = "continuous")
 
@@ -452,7 +457,7 @@ r_inc_f <- merge(r_inc_f,reg_graduate2@data,by.x='id',by.y="NUTS_ID")
 
 ggplot(r_inc_f,aes(x=long,y=lat,group=group))+
   geom_polygon(aes(fill= ratio))+
-  geom_path(colour='white',size=1e-3) +scale_fill_gradient(low = 'yellow', high = 'darkorange') + coord_fixed() + labs(title="Percentage of Graduates in Italy",subtitle="Distribution of graduates in the different Italian regions", x= "Longitude", y= "Latitude", fill= "Percentage ")
+  geom_path(colour='white',linewidth=1e-3) +scale_fill_gradient(low = 'yellow', high = 'darkorange') + coord_fixed() + labs(title="Percentage of Graduates in Italy",subtitle="Distribution of graduates in the different Italian regions", x= "Longitude", y= "Latitude", fill= "Percentage ")
 
 
 ```
