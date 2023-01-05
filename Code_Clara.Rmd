@@ -169,7 +169,7 @@ This second group of tables instead divides the population between (at least) Gr
 
 ### Geographical Area
 
-The second variable we will use for our analysis is the geographic area from which the surveyed population comes from. More specifically, the variable divides the population in three parts: North, Centre and South plus Islands. 
+The second variable we will use for our analysis is the geographic area from which the surveyed population comes from. More specifically, the variable divides the population in three parts: North, Centre and South plus Islands. North comprises: Valle D'Aosta, Piemonte, Lombardia, Veneto, Trentino Alto Adige-Sud Tirol, Friuli Venezia Giulia, Liguria ed Emilia Romagna. Center Comprises Toscana, Marche, Umbria and Lazio. South and Islands comprises the rest.
 
 ```{r echo=FALSE}
 
@@ -188,12 +188,12 @@ kable ((table(df$df.area3Labelled)/length(df$df.studioLabelled)*100), caption = 
 ```
 
 
-
+The most populous group comprises the Northern Regions, with almost 44% of the observed individuals coming from there. 
 
 
 ### Italian Regions
 
-The third variable we will use for our analysis are the Italian regions from which the surveyed population comes from
+The third variable we will use for our analysis are the 20 Italian regions from which the surveyed population comes from. 
 
 ```{r echo=FALSE}
 
@@ -203,13 +203,18 @@ df$df.IregLabelled <- ordered(df$df.ireg,
 
 kable(table(df$df.IregLabelled), caption = 'Absolute Frequencies of Italian regions in the Dataset', col.names = c('Italian regions','Frequency'), 'pipe')
 
+kable((table(df$df.IregLabelled)/length(df$df.IregLabelled)*100), caption = 'Relative Frequencies of Italian regions in the Dataset', col.names = c('Italian regions','Frequency'), 'pipe')
+
 #I cerate a variable, which is a copy of the previous Variable, but labelled. So I can create a nice table with labels instead of numbers. This Variables is gonna be used only for viz purposes.
 
 ```
 
+The most represented Region is Lombardia with 11.3% of individuals, followed by Piemonte (8.55%) and Campania (8.47%).
+
+
 ### Net Disposable Income Per Capita
 
-Net Disposable Income is the total income available after that all the transfers (taxes, deductions, etc) have been taken into account. It is the total amount of money that a person can effectively spend.
+The Third Variable of this Dataset is Net Disposable Income. It is the total income available after that all the transfers (taxes, deductions, etc) have been taken into account. It is the total amount of money that a person can effectively spend.
 
 First we are going to check whether there are any missing values.
 
@@ -286,15 +291,18 @@ kable(st(df, vars = 'Income', factor.numeric = TRUE, summ =  c('mean(x)', 'sd(x)
 
 ```
 
-BLA BLA BLA. I think we can conclude this part with some observations on this table, and then go further.
+As expected with income data the mean and the median are quite far apart, ss the mean is heavenly influenced by the extreme rich in the sample. For this reason, we are going to concentrate on the median for our further analysis.
 
 ------------------------------------------------------------------------
 
 
-## Block 1 - STUDIO VS AREA3
+## Block 1 - Geographical distribution of Educational Attainment
+
+In the first section we look from different perspectives at the geographical distribution of Educational Attainment in Italy.
+
+The first plot is an Histogram grouping by Macro Geographical Area the level of Education 
 
 
-Our first analysis is going to compare Educational attainment for the different Geographical Areas
 
 ```{r,echo=FALSE}
 # I have to change the order of this variable so that noth is on top (only for horizontal)
@@ -307,14 +315,14 @@ df$ordgraduate = ordered(df$graduate,
                         levels=c('Not Graduated','At least Graduated'))
 ```
 
-```{r fig.asp = 0.3, fig.width = 8, echo=FALSE}
+```{r fig.asp = 0.3, fig.width = 10, echo=FALSE}
 g <- ggplot(df, aes(df.area3HLabelled))
-g + geom_bar(aes(fill=df.studioLabelled), width = 0.7) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas unadjusted", x= "Geographical Area", y= "count", fill="Educational Attainment") + coord_flip()
+g + geom_bar(aes(fill=df.studioLabelled), width = 0.5) + labs(title="Histogram on Absolute Educational Attainment in Italy",subtitle="by Geographical Areas", x= "Geographical Area", y= "count", fill="Educational Attainment") + coord_flip()
 
 
 ```
 
-The following graph shows educational attainment not adjusted for population, let's adjust it
+The following graph shows educational attainment not adjusted for population, **i.e. in absolute terms**. We can see that the North has the higher number of observations per each level but 'None', which is more present in South and Island. Still, given the nature of this graph, it is hard to make any sort of comparison between the three geographical area, for this reason, the next plot will present the same data but in realtive terms. 
 
 ```{r, echo=FALSE}
 df$df.farea3HLabelled <- as.factor(df$df.area3HLabelled)
@@ -329,11 +337,15 @@ df$df.fstudioLabelled <- as.factor(df$df.studioLabelled)
     mutate(ratio=scales::percent(n/sum(n),accuracy = 1))
 
 g <- ggplot(df, aes(x=df.farea3HLabelled, fill= df.fstudioLabelled))
-g + geom_bar(position="fill", width = 0.5) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + geom_text(data=percentData, aes(y=n,label=ratio), position=position_fill(vjust=0.5),colour="white") + coord_flip()
+g + geom_bar(position="fill", width = 0.5) + labs(title="Histogram on Relative Educational Attainment in Italy",subtitle="by Geographical Areas", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + geom_text(data=percentData, aes(y=n,label=ratio), position=position_fill(vjust=0.5),colour="white") + coord_flip()
 
 
 
 ```
+
+Here the situation appears way more readable. Southern Italy has the higher percentage of people not achieving any kind of diploma, a situation that in Italy is referred with 'School Dropout'. Centre and North have share similar values in Diploma as maximum attainment, with North having a bigger share of Vocational Diplomas, and Center having a higher share of Upper Secondary Diplomas. North, in general, has the highest level of Vocational Diplomas as maximum attainment, and the highest level of graduates, as we will evalaute in the next chart.
+
+
 
 ```{r fig.asp = 0.5, fig.width = 5.5, echo=FALSE}
 
@@ -342,10 +354,12 @@ percentData <- df %>% group_by(df.farea3HLabelled) %>% count(ordgraduate) %>%
     mutate(ratio=scales::percent(n/sum(n),accuracy = 1))
 
 g <- ggplot(df, aes(x=df.farea3HLabelled, fill= ordgraduate))
-g + geom_bar(position="fill", width = 0.7) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + geom_text(data=percentData, aes(y=n,label=ratio), position=position_fill(vjust=0.5),colour="white") + coord_flip()
+g + geom_bar(position="fill", width = 0.7) + labs(title="Histogram on Relative Number of Graduates in Italy",subtitle="by Geographical Areas", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + geom_text(data=percentData, aes(y=n,label=ratio), position=position_fill(vjust=0.5),colour="white") + coord_flip()
 
 
 ```
+
+As this chart further highlights, North has the higher number of graduates, followed by Centre and then South. What appears interesting though, is that the differences are really thin, in a order of single percentage points. In overal term, we can see that 12/13% of the italian population is at least graduated.
 
 ```{r fig.asp = 0.5, fig.width = 10, echo=FALSE}
 
@@ -353,8 +367,14 @@ percentData <- df  %>% group_by(df.IregLabelled) %>% count(df.fstudioLabelled) %
     mutate(ratio=scales::percent(n/sum(n),accuracy = 1))
 
 g <- ggplot(df, aes(x=df.IregLabelled, fill= df.fstudioLabelled))
-g + geom_bar(position="fill", width = 0.9) + labs(title="Histogram on Education in Italy",subtitle="Educational attainment in the different Geographical Areas", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + geom_text(data=percentData, aes(y=n,label=ratio), position=position_fill(vjust=0.5),colour="white") + coord_flip()
+g + geom_bar(position="fill", width = 0.9) + labs(title="Histogram on Relative Educational Attainment in Italy",subtitle="By Region", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + geom_text(data=percentData, aes(y=n,label=ratio), position=position_fill(vjust=0.5),colour="white") + coord_flip()
 ```
+
+This last graph is in our opinion the most interesting. Looking at Southern Regions first, the presence of tones of blue is quite relevant. Way more than half the population (if we exclude Abruzzo and Molise) has not even obtained a diploma. Moreover, even though Molise and Abruzzo are included in 'South and Islands', they perform much more like regions in the Centre-North than those in the South.
+
+Considering instead the Central Regions, Umbria is the one with the least graduated, even in National Perspective. By reflection, is one of the regions with highest levels of Diploma as maximum attainment. Overall, it is not that easy to find clear tendencies that differentiate Central from Northen regions. What appears interesting is the high level of graduates in Molise and Abruzzi, as well as Friuli; and the low levels of graduate in Piemonte and Veneto and Trentino. A clear Outlier here is Valle D'Aosta, which has performances comparable with southern regions in every aspect. 
+
+Overall, this serie of graphs shows that the population residing in Southern Italy is the one with higher levels of school dropouts. The population living in Central and Northern Italy shares similar Attainments. The overall level of graduates is similar in every Macro Area, but this is biased by the fact that Abruzzi and Molise are considered Southern Regions, and not as Central Regions.
 
 ------------------------------------------------------------------------
 
