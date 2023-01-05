@@ -378,7 +378,7 @@ Overall, this serie of graphs shows that the population residing in Southern Ita
 
 ------------------------------------------------------------------------
 
-## Block 2 - INCOME VS STUDIO VS IREG VS AREA3
+## Block 2 - INCOME 
 
 we are going to look now only at the people that graduated
 
