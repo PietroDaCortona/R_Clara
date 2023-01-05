@@ -375,11 +375,13 @@ shp <- readOGR("geofiles","NUTS_RG_20M_2021_3035")
 shp <- subset(shp,CNTR_CODE == "IT")
 shp <- subset(shp, LEVL_CODE ==2)
 
+
 reg_income$NUTS_ID <- c("ITI2","ITF6","ITH1", "ITF2", "ITH3", "ITF4", "ITF3", "ITF1", "ITG1", "ITI3", "ITH4", "ITF5", "ITH5", "ITC2", "ITC3", "ITI1", "ITC1", "ITG2", "ITI4", "ITC4")
 a <- c("Alto adige", 20089.87,"ITH2")
 reg_income$Region <- as.character(reg_income$Region)
 names(a) <- c("Region","Income","NUTS_ID")
 reg_income <- rbind(reg_income,a)
+reg_income$Income<-as.integer(reg_income$Income)
 
 
 nuts_name <- reg_income %>% select(Region,NUTS_ID)
@@ -394,15 +396,21 @@ df <- left_join(df,nuts_name, by="df.IregLabelled")
 
 
 
-```{r}
+```{r fig.asp = 0.5, fig.width = 5.5}
+#install.packages("wesanderson")
+library("wesanderson")
+
+pal <- wes_palette("Zissou1", 21, type = "continuous")
+
 reg_income2 <- merge(shp,reg_income, by ="NUTS_ID")
 r_inc_f<-fortify(reg_income2, region='NUTS_ID')
-r_inc_f <- merge(r_inc_f,reg_income@data,by.x='id',by.y="NUTS_ID")
-
+r_inc_f <- merge(r_inc_f,reg_income2@data,by.x='id',by.y="NUTS_ID")
 
 ggplot(r_inc_f,aes(x=long,y=lat,group=group))+
   geom_polygon(aes(fill= Income))+
-  geom_path(colour='white',size=1e-3)
+  geom_path(colour='white',size=1e-3) +scale_fill_gradientn(colours = pal) + coord_fixed() + labs(title="Median income in Italy of Graduates",subtitle="Income distribution in the different Italian regions of graduates", x= "Longitude", y= "Latitude")
 
+
+# scale_colour_gradient(low='white', high='grey20') 
 
 ```
