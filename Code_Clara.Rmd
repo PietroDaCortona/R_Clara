@@ -377,19 +377,27 @@ Overall, this serie of graphs shows that the population residing in Southern Ita
 
 ------------------------------------------------------------------------
 
-## Block 2 - INCOME 
+## Block 2 - Income of Graduates
 
-we are going to look now only at the people that graduated
+In this second section we will evaluate the distribution of income among graduates, in Italy, and per region. The parameter that we look at is Median Income for Graduates, considering the whole country, and we will compare it with Median Income of the whole population.
 
 ```{r, echo=FALSE}
 dfg <- subset(df, graduate == 'At least Graduated')
 ```
 
-Let's calculate the median income of Graduates in Italy
+
 
 ```{r}
 median(dfg$Income)
+
+median (df$df.y)
 ```
+
+
+The Median Income of graduates in 2016 is almost 8000 Euros higher than the Median Income, considering the whole population. 
+
+Now we look at the differences between regions.
+
 
 ```{r, echo=FALSE}
 
@@ -404,6 +412,8 @@ kable(reg_income, caption = 'Median income in the diffrent regions of Graduates'
 
 ```
 
+This table order the Italian Regions from the lowest Median Income of Graduates to the highest. A similar visualization of the same data is the following:
+
 ```{r, echo=FALSE}
 # Plot lollipop chart
 ggplot(reg_income, aes(x=Region, y=Median_Income)) + 
@@ -415,8 +425,13 @@ ggplot(reg_income, aes(x=Region, y=Median_Income)) +
   labs(title="Lollipop Chart", 
        subtitle="Region Vs median income of Graduates", 
        caption="source: mpg") + 
-  theme(axis.text.x = element_text(angle=65, vjust=0.6))
+  theme(axis.text.x = element_text(angle=90, vjust=0.6))
 ```
+
+As we can see from the Lollipop Chart, there are some interesting aspects to observe. Regions do not gather together according to their geographical location. We know from facts that in general, Northern Regions are the richest, and that Southern Regions are the poorests, in terms of Income. But, if we look only at Income of Gradutaes in the SHIW, which is a reliable source of Information, we do not see that same trend. Instead, we see that among the three last regions in term of Median income of Graduates, one is Central (Umbria), one is Southern (Calabria), and one is Northern (Trentino Alto Adige). At the same time, if we look at the top, we sese a Northern Region (Lombardia), a Central Region (Lazio), and a Southern Region (Sardegna).
+
+
+
 
 ```{r, echo=FALSE}
 g <- ggplot( dfg,aes(df.IregLabelled, Income))
@@ -426,7 +441,9 @@ g + geom_boxplot() + coord_flip() + labs(title="Distribution of Income in Italy 
 
 ------------------------------------------------------------------------
 
-## Block 3 - GEOGRAFPHICAL PERSPECTIVE
+## Block 3 - Maps of Income and Graduates
+
+In the first section we will see a different representation of the data that we already saw before, by using maps.
 
 ```{r, include=FALSE, echo=FALSE, message=FALSE, results='hide'}
 #install.packages("rgdal")
@@ -466,13 +483,17 @@ r_inc_f <- merge(r_inc_f,reg_income3@data,by.x='id',by.y="NUTS_ID")
 
 ggplot(r_inc_f,aes(x=long,y=lat,group=group))+
   geom_polygon(aes(fill= Income))+
-  geom_path(colour='white',linewidth=1e-3) +scale_fill_gradient(low = 'yellow', high = 'darkorange') + coord_fixed() + labs(title="Median income in Italy of Graduates",subtitle="Income distribution in the different Italian regions of graduates",fill= "Median Income ") + theme_classic()  + theme(axis.ticks.x = element_blank(),
+  geom_path(colour='white',linewidth=1e-3) +scale_fill_gradient(low = 'yellow', high = 'darkorange') + coord_fixed() + labs(title="Median income of Graduataes per Region",fill= "Median Income ") + theme_classic()  + theme(axis.ticks.x = element_blank(),
         axis.text.x = element_blank(), axis.ticks.y = element_blank(),
         axis.text.y = element_blank(),axis.title.x=element_blank(), ,axis.title.y=element_blank(),axis.line.y=element_blank(), axis.line.x=element_blank() ) 
 
 
 
 ```
+
+
+In this first we show the distribution of Median Income of Graduates, per Region. As we can see from the labeling, the gradate scale goes from intense Orange (Highest Income) to intense Yellow (Lowest Income). This map gives an immediate clue of the situation of the country. We can see that in the North Western part of Italy Income is high, as well as Tirrenic Central Italy. At the same time we see that Southern Italy and North East share a low level of income for graduates.
+
 
 ```{r, echo=FALSE, message=FALSE, results='hide'}
 #reg_graduate  
@@ -521,3 +542,13 @@ ggplot(r_inc_f,aes(x=long,y=lat,group=group))+
 
 
 ```
+
+This second map, instead, shows the level of graduates residing in each region. Here we can see that Adriatic Southern Italy (Abruzzo, Molise and Puglia), has got a fair amount of graduates among its residents, if compared to the rest of the South. If we look at Central Italy, the situation is even but for Umbria, as we saw before, which has got one of the lowest level of graduates in Italy. Northern Italy is the most fragmented. While the overall levels of graduates is mid-high, we see that Piemonte and Veneto clearly behave differently.
+
+
+# Conclusion
+
+The aim of this project was to improve our ability at programming with R. In particular, in this work we learnt to: Code with R MarkDown and Improve our DataViz Capacities. The focus of our analysis was purely descriptive, and we tried to avoid any kind of interpretation or explanation of the data that we presented. Still, we recognize that there is a lot of potential of analysis and research in the work that we have done.
+
+
+
