@@ -96,7 +96,7 @@ nrow(df)
 ```
 
 
-The Dataset used is the [Survey of Household of Income and Wealth (SHIW)](https://www.bancaditalia.it/statistiche/tematiche/indagini-famiglie-imprese/bilanci-famiglie/index.html?com.dotmarketing.htmlpage.language=1), in its 2016 version. Each row corresponds to an Italian citizen selected through random techniques. The overall number of observations is 11888. Each column correpsonds to a variable. The selected variables are the following: Educational Attainment (df.STUDIO), Income per Capita(df.Y), Geographicl area(df.AREA3), Region(df.IREG). In the following sections we will better understand the meaning of each variable and its states. 
+The Dataset used is the [Survey of Household of Income and Wealth (SHIW)](https://www.bancaditalia.it/statistiche/tematiche/indagini-famiglie-imprese/bilanci-famiglie/index.html?com.dotmarketing.htmlpage.language=1), in its 2016 version. Each row corresponds to an Italian citizen selected through random techniques. The overall number of observations is 11888. Each column correpsonds to a variable. The selected variables are the following: Educational Attainment (df.STUDIO), Income per Capita(df.Y), Macro Geographical area of living(df.AREA3), Region of living(df.IREG). In the following sections we will better understand the meaning of each variable and its states. 
 
 ### Education
 
@@ -106,7 +106,7 @@ The first thing that we need for our analysis is Educational Attainment of the P
 
 df$df.studioLabelled <- ordered(df$df.studio,
                         levels=c(1,2,3,4,5,6,7,8),
-                        labels=c('None','Primary','Lower Secondary','Vocational Diploma','Upper Secondary Diplomae','3y Degree','5y Degree','Postgraduate'))
+                        labels=c('None','Primary','Lower Secondary','Vocational Diploma','Upper Secondary Diploma','3y Degree','5y Degree','Postgraduate'))
 
 kable(table(df$df.studioLabelled), caption = 'Absolute Frequencies of Educational Attainment in the Dataset', col.names = c('Educational Attainment','Frequency'), 'pipe')
 
@@ -160,7 +160,7 @@ kable((table(df$graduate)/length(df$graduate)*100), caption = 'Graduated VS Not 
 
 
 
-This second group of tables instead divides the population between (at least) Graduated and not Graduated. As we can se, only 12.5% of the population achieved at least a 3-years Uiversity Degree.
+This second group of tables instead divides the population between (at least) Graduated and not Graduated. As we can se, only 12.7% of the population achieved at least a 3-years Uiversity Degree.
 
 
 
@@ -291,7 +291,7 @@ kable(st(df, vars = 'Income', factor.numeric = TRUE, summ =  c('mean(x)', 'sd(x)
 
 ```
 
-As expected with income data the mean and the median are quite far apart, ss the mean is heavenly influenced by the extreme rich in the sample. For this reason, we are going to concentrate on the median for our further analysis.
+As expected with income data the mean and the median are quite far apart, because the mean is influenced by the extreme rich in the sample. For this reason, we are going to concentrate on the median for our further analysis.
 
 ------------------------------------------------------------------------
 
@@ -342,7 +342,7 @@ g + geom_bar(position="fill", width = 0.5) + labs(title="Histogram on Relative E
 
 ```
 
-Here the situation appears way more readable. Southern Italy has the higher percentage of people not achieving any kind of diploma, a situation that in Italy is referred with 'School Dropout'. Centre and North have share similar values in Diploma as maximum attainment, with North having a bigger share of Vocational Diplomas, and Center having a higher share of Upper Secondary Diplomas. North, in general, has the highest level of Vocational Diplomas as maximum attainment, and the highest level of graduates, as we will evalaute in the next chart.
+Here the situation appears way more readable. Southern Italy has the higher percentage of people not achieving any kind of diploma, a situation that in Italy is referred as 'School Dropout'. Centre and North have share similar values in Diploma as maximum attainment, with North having a bigger share of Vocational Diplomas, and Center having a higher share of Upper Secondary Diplomas. North, in general, has the highest level of Vocational Diplomas as maximum attainment, and the highest level of graduates, as we will evalaute in the next chart.
 
 
 
@@ -369,7 +369,7 @@ g <- ggplot(df, aes(x=df.IregLabelled, fill= df.fstudioLabelled))
 g + geom_bar(position="fill", width = 0.9) + scale_fill_brewer(palette = "Dark2") + labs(title="Histogram on Relative Educational Attainment in Italy",subtitle="By Region", x= "Geographical Area", y= "Percentage", fill="Educational Attainment") + geom_text(data=percentData, aes(y=n,label=ratio), position=position_fill(vjust=0.5),colour="black") + coord_flip() + theme_classic()
 ```
 
-This last graph is in our opinion the most interesting. Looking at Southern Regions first, the presence of tones of blue is quite relevant. Way more than half the population (if we exclude Abruzzo and Molise) has not even obtained a diploma. Moreover, even though Molise and Abruzzo are included in 'South and Islands', they perform much more like regions in the Centre-North than those in the South.
+This last graph is in our opinion the most interesting. It shows the relative distribution of Educational attainmente, per Region. Looking at Southern Regions first, the presence of tones of blue is quite relevant. Way more than half the population (if we exclude Abruzzo and Molise) has not even obtained a diploma. Moreover, even though Molise and Abruzzo are included in 'South and Islands', they perform much more like regions in the Centre-North than those in the South.
 
 Considering instead the Central Regions, Umbria is the one with the least graduated, even in National Perspective. By reflection, is one of the regions with highest levels of Diploma as maximum attainment. Overall, it is not that easy to find clear tendencies that differentiate Central from Northen regions. What appears interesting is the high level of graduates in Molise and Abruzzi, as well as Friuli; and the low levels of graduate in Piemonte and Veneto and Trentino. A clear Outlier here is Valle D'Aosta, which has performances comparable with southern regions in every aspect. 
 
@@ -412,7 +412,7 @@ kable(reg_income, caption = 'Median income in the diffrent regions of Graduates'
 
 ```
 
-This table order the Italian Regions from the lowest Median Income of Graduates to the highest. A similar visualization of the same data is the following:
+This table orders the Italian Regions from the lowest Median Income of Graduates to the highest. A similar visualization of the same data is the following:
 
 ```{r, echo=FALSE}
 # Plot lollipop chart
@@ -428,7 +428,7 @@ ggplot(reg_income, aes(x=Region, y=Median_Income)) +
   theme(axis.text.x = element_text(angle=90, vjust=0.6))
 ```
 
-As we can see from the Lollipop Chart, there are some interesting aspects to observe. Regions do not gather together according to their geographical location. We know from facts that in general, Northern Regions are the richest, and that Southern Regions are the poorests, in terms of Income. But, if we look only at Income of Gradutaes in the SHIW, which is a reliable source of Information, we do not see that same trend. Instead, we see that among the three last regions in term of Median income of Graduates, one is Central (Umbria), one is Southern (Calabria), and one is Northern (Trentino Alto Adige). At the same time, if we look at the top, we sese a Northern Region (Lombardia), a Central Region (Lazio), and a Southern Region (Sardegna).
+As we can see from the Lollipop Chart, there are some interesting aspects to observe. Regions do not gather together according to their geographical location. We know from facts that in general, Northern Regions are the richest, and that Southern Regions are the poorests, in terms of Income. But, if we look only at Income of Gradutaes in the SHIW, which is a reliable source of Information, we do not see that same trend. Instead, we see that among the three last regions in term of Median income of Graduates, one is Central (Umbria), one is Southern (Calabria), and one is Northern (Trentino Alto Adige). At the same time, if we look at the top, we see a Northern Region (Lombardia), a Central Region (Lazio), and a Southern Region (Sardegna).
 
 
 
@@ -440,7 +440,7 @@ g + geom_boxplot() + coord_flip() + labs(title="Distribution of Income in Italy 
 ```
 
 
-In the graph above, it can be seen that the income distribution also varies between the different regions, although it should be noted that four observations that were above 20000 are not shown in the graph, as they made the variation between regions less visible. It can be seen that certain regions such as Molise and Abruzzo have a lower interquartile range than, for example, Lombardy, but it cannot be concluded that regions with a higher median have a wider interquartile range.
+In the graph above, it can be seen that the income distribution also varies between the different regions, although it should be noted that four observations that were above 20000 are not shown in the graph, as they made the variation between regions less visible. It can be seen that certain regions such as Molise and Abruzzo have a lower interquartile range than, for example, Lombardia, but it cannot be concluded that regions with a higher median have a wider interquartile range.
 
 
 
