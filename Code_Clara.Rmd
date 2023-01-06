@@ -439,6 +439,11 @@ g + geom_boxplot() + coord_flip() + labs(title="Distribution of Income in Italy 
 
 ```
 
+
+In the graph above, it can be seen that the income distribution also varies between the different regions, although it should be noted that four observations that were above 20000 are not shown in the graph, as they made the variation between regions less visible. It can be seen that certain regions such as Molise and Abruzzo have a lower interquartile range than, for example, Lombardy, but it cannot be concluded that regions with a higher median have a wider interquartile range.
+
+
+
 ------------------------------------------------------------------------
 
 ## Block 3 - Maps of Income and Graduates
@@ -449,7 +454,6 @@ In the first section we will see a different representation of the data that we 
 #install.packages("rgdal")
 #install.packages("maptools")
 #install.packages("pacman")
-#always need to add sudtirol    ehheheheheeheheh
 
 
 
@@ -458,18 +462,18 @@ shp <- subset(shp,CNTR_CODE == "IT")
 shp <- subset(shp, LEVL_CODE ==2)
 
 
-reg_income$NUTS_ID <- c("ITI2","ITF6","ITH1", "ITF2", "ITH3", "ITF4", "ITF3", "ITF1", "ITG1", "ITI3", "ITH4", "ITF5", "ITH5", "ITC2", "ITC3", "ITI1", "ITC1", "ITG2", "ITI4", "ITC4")
-a <- c("Alto adige", 20089.87,"ITH2")
+reg_income$NUTS_ID <- c("ITI2","ITF6","ITH1", "ITF2", "ITH3", "ITF4", "ITF3", "ITF1", "ITG1", "ITI3", "ITH4", "ITF5", "ITH5", "ITC2", "ITC3", "ITI1", "ITC1", "ITG2", "ITI4", "ITC4") # I am adding standardized NUTS_ID codes to the data
+a <- c("Alto adige", 20089.87,"ITH2") # Fixing the problem that our data has no extra data point for alto adige so I manually add alto adige with the same data as trentino so that there will be no white spot on the map 
 reg_income$Region <- as.character(reg_income$Region)
 names(a) <- c("Region","Income","NUTS_ID")
-reg_income2 <- rbind(reg_income,a)
+reg_income2 <- rbind(reg_income,a) # combining my new alto agige variable to mz regions dataset
 reg_income2$Income<-as.integer(reg_income2$Median_Income)
 
 
-nuts_name <- reg_income2 %>% select(Region,NUTS_ID)
+nuts_name <- reg_income2 %>% select(Region,NUTS_ID) 
 names(nuts_name) <- c("df.IregLabelled","NUTS_ID")
 
-df <- left_join(df,nuts_name, by="df.IregLabelled")
+df <- left_join(df,nuts_name, by="df.IregLabelled") # adding nuts id to the whole data set
 
 
 ```
@@ -477,15 +481,15 @@ df <- left_join(df,nuts_name, by="df.IregLabelled")
 ```{r fig.asp = 0.5, fig.width = 10, echo=FALSE, message=FALSE}
 #install.packages("wesanderson")
 
-reg_income3 <- merge(shp,reg_income2, by ="NUTS_ID")
-r_inc_f<-fortify(reg_income3, region='NUTS_ID')
+reg_income3 <- merge(shp,reg_income2, by ="NUTS_ID") #merge shape file by income based in the NUTS_ID
+r_inc_f<-fortify(reg_income3, region='NUTS_ID') #Reduce the dimensions of the shape file so it can be plotted more easily
 r_inc_f <- merge(r_inc_f,reg_income3@data,by.x='id',by.y="NUTS_ID")
 
 ggplot(r_inc_f,aes(x=long,y=lat,group=group))+
   geom_polygon(aes(fill= Income))+
-  geom_path(colour='white',linewidth=1e-3) +scale_fill_gradient(low = 'yellow', high = 'darkorange') + coord_fixed() + labs(title="Median income of Graduataes per Region",fill= "Median Income ") + theme_classic()  + theme(axis.ticks.x = element_blank(),
-        axis.text.x = element_blank(), axis.ticks.y = element_blank(),
-        axis.text.y = element_blank(),axis.title.x=element_blank(), ,axis.title.y=element_blank(),axis.line.y=element_blank(), axis.line.x=element_blank() ) 
+  geom_path(colour='white',linewidth=1e-3) +scale_fill_gradient(low = 'yellow', high = 'darkorange') + coord_fixed() + labs(title="Median income of Graduataes per Region",fill= "Median Income ") + theme_classic()  + theme(axis.ticks.x = element_blank(), axis.text.x = element_blank(), axis.ticks.y = element_blank(), axis.text.y =element_blank(),axis.title.x=element_blank(),axis.title.y=element_blank(),axis.line.y=element_blank(), axis.line.x=element_blank() ) 
+
+
 
 
 
@@ -496,13 +500,9 @@ In this first we show the distribution of Median Income of Graduates, per Region
 
 
 ```{r, echo=FALSE, message=FALSE, results='hide'}
-#reg_graduate  
-#myStmyStats <myStats <up_by(df.IregL  %>% group_by(df.IregLabelled) %>% count(graduate) %>%
-#    mutate(ratio=scales::percent(n/sum(n),accuracy = 1))%>% mutate(graduate= graduate))
-
 
 reg_graduate <- df  %>% group_by(df.IregLabelled) %>% count(ordgraduate) %>%
-    mutate(ratio=(n/sum(n)*100))
+    mutate(ratio=(n/sum(n)*100))  # calculate percentage of graduates per region
 
 
 
@@ -525,10 +525,6 @@ reg_graduate$ratio <- as.integer(reg_graduate$ratio)
 
 ```{r fig.asp = 0.5, fig.width = 10, echo=FALSE, message=FALSE}
 
-#install.packages("wesanderson")
-
-
-pal <- wes_palette("Zissou1", 21, type = "continuous")
 
 reg_graduate2 <- merge(shp,reg_graduate, by ="NUTS_ID")
 r_inc_f<-fortify(reg_graduate2, region='NUTS_ID')
