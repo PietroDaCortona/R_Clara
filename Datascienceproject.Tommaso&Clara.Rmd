@@ -287,8 +287,6 @@ kable(st(df, vars = 'Income', factor.numeric = TRUE, summ =  c('mean(x)', 'sd(x)
 
 # I kable the command st, which stands for SUMMARY TABLE. This command creates a table which all the statistical measures that you want!
 
-#Clara if you want to add other statistics at this table give a look here: https://cran.r-project.org/web/packages/vtable/vignettes/sumtable.html
-
 ```
 
 As expected with income data the mean and the median are quite far apart, because the mean is influenced by the extreme rich in the sample. For this reason, we are going to concentrate on the median for our further analysis.
